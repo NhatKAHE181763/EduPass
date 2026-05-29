@@ -19,8 +19,7 @@ bundle install
 
 2. Update the local environment file:
 
-Edit `.env` with your PostgreSQL, Cloudinary, Stripe, and JWT values.
-If your local Postgres requires a password, set `POSTGRES_PASSWORD`.
+Edit `.env` with your PostgreSQL, Cloudinary, and JWT values.
 
 3. Create and prepare the databases:
 
@@ -48,8 +47,6 @@ Example keys:
 ```yaml
 devise:
 	jwt_secret_key: your-jwt-secret
-stripe:
-	secret_key: sk_live_...
 ```
 
 ## Background jobs (Solid Queue)
@@ -72,8 +69,3 @@ SOLID_QUEUE_IN_PUMA=1 bin/rails server
 bin/rubocop
 bin/rails test
 ```
-
-## Notes
-
-- Action Text is installed.
-- Importmap pins Bootstrap 5, Chart.js, and SortableJS.

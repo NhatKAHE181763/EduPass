@@ -12,8 +12,6 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   root "home#index"
 
-  # Solid Queue dashboard (admin only)
-  authenticate :user, ->(user) { user.admin? } do
-    mount MissionControl::Jobs::Engine => "/jobs"
-  end
+  # Solid Queue dashboard
+  mount MissionControl::Jobs::Engine => "/jobs"
 end

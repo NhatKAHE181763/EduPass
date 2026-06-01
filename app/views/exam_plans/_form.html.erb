@@ -1,0 +1,55 @@
+<%= form_with(model: exam_plan, local: true) do |form| %>
+  <% if exam_plan.errors.any? %>
+    <div class="alert alert-danger">
+      <h5 class="mb-3">Có lỗi xảy ra:</h5>
+      <ul class="mb-0">
+        <% exam_plan.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="row g-3">
+    <div class="col-12">
+      <%= form.label :plan_name, "Tên kế hoạch", class: "form-label" %>
+      <%= form.text_field :plan_name, class: "form-control", placeholder: "Ví dụ: IELTS Tháng 12" %>
+    </div>
+
+    <div class="col-md-6">
+      <%= form.label :exam_type, "Loại kỳ thi", class: "form-label" %>
+      <%= form.select :exam_type,
+        ExamPlan.exam_types.keys.map { |type| [type.titleize, type] },
+        { prompt: "Chọn loại kỳ thi" },
+        class: "form-select" %>
+    </div>
+
+    <div class="col-md-6">
+      <%= form.label :exam_date, "Ngày thi", class: "form-label" %>
+      <%= form.date_field :exam_date, class: "form-control" %>
+    </div>
+
+    <div class="col-md-6">
+      <%= form.label :target_score, "Điểm mục tiêu", class: "form-label" %>
+      <%= form.number_field :target_score, step: 0.1, min: 0, class: "form-control", placeholder: "8.0" %>
+    </div>
+
+    <div class="col-md-6">
+      <%= form.label :is_active, "Kích hoạt kế hoạch", class: "form-label d-block" %>
+      <div class="form-check form-switch">
+        <%= form.check_box :is_active, class: "form-check-input", id: "exam_plan_is_active" %>
+        <%= form.label :is_active, "Hoạt động", class: "form-check-label", for: "exam_plan_is_active" %>
+      </div>
+    </div>
+
+    <div class="col-12">
+      <%= form.label :notes, "Ghi chú", class: "form-label" %>
+      <%= form.text_area :notes, rows: 5, class: "form-control", placeholder: "Ghi chú về lộ trình, lịch học, tài liệu cần chuẩn bị..." %>
+    </div>
+  </div>
+
+  <div class="mt-4 d-flex gap-2">
+    <%= form.submit exam_plan.persisted? ? "Cập nhật kế hoạch" : "Tạo kế hoạch", class: "btn btn-primary" %>
+    <%= link_to "Hủy", exam_plans_path, class: "btn btn-outline-secondary" %>
+  </div>
+<% end %>

@@ -58,8 +58,13 @@ gem "activestorage-cloudinary-service"
 # Solid Queue Web UI
 gem "mission_control-jobs"
 
+# Google OAuth
+gem "omniauth-google-oauth2"
+gem "omniauth-rails_csrf_protection"
+
 group :development, :test do
   gem "dotenv-rails"
+  gem "letter_opener"
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
 

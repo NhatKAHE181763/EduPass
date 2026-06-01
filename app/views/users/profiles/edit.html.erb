@@ -1,0 +1,36 @@
+<div class="container mt-5">
+  <h2>Edit Profile</h2>
+
+    <%= form_with(model: @user, url: users_profile_path, method: :patch, local: true, html: {multipart: true}) do |f| %>
+      
+      <div class="mb-3 d-flex flex-column align-items-start">
+        <% if @user.avatar.attached?%>
+            <%= cl_image_tag(@user.avatar.key,
+            width: 150,
+            height: 150,
+            crop: :thumb, gravity: :face,
+            radius: :max,
+            class: "mb-2 shadow-sm") %>
+        <% else %>
+            <div class="bg-secondary rounded-circle mb-2" style="width: 150px; height: 150px;"> </div>
+        <% end %>
+
+        <%= f.label :avatar, "Change Avatar", class: "form-label" %>
+        <%= f.file_field :avatar, class: "form-control", accept: "image/png,image/gif,image/jpeg,image/webp" %>
+      </div>
+
+      <div class="mb-3">
+        <%= f.label :full_name, "Full Name", class: "form-label" %>
+        <%= f.text_field :full_name, class: "form-control" %>
+      </div>
+
+      <div class="mb-3">
+        <%= f.label :email, "Email", class: "form-label" %>
+        <%= f.email_field :email, disabled: true, class: "form-control" %>
+      </div>
+
+      <%= f.submit "Update Profile", class: "btn btn-primary" %>
+      <%= link_to "Change Password", edit_users_password_path, class: "btn btn-outline-secondary ms-2" %>
+    <% end %>
+
+</div>

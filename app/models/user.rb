@@ -35,4 +35,42 @@ class User < ApplicationRecord
   def inactive_message
     discarded? ? :deleted_account : super
   end
+
+  def total_study_hours
+    (study_activities.sum(:total_duration_seconds) / 3600.0).round(1)
+  end
+
+  def total_exam_attempts
+    study_activities.sum(:exam_attempts_count)
+  end
+
+  def active_streak
+    # descending
+    activities = study_activities.has_content.recent.pluck(:activity_date).uniq
+    0 if activities.empty?
+    streak = 0
+    current_date = Date.current
+
+    if activities.first == current_date
+      streak = 1
+      start_idx = 1
+      check_date = current_date - 1.day
+    elsif activities.first == current_date - 1.day
+      streak = 1
+      start_idx = 1
+      check_date = current_date - 2.days
+    else
+      0
+    end
+
+    activities[start_idx..-1].each do |date|
+      if date == check_date
+        streak += 1
+        check_date -= 1.day
+      else
+        break
+      end
+    end
+    streak
+  end
 end

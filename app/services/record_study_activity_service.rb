@@ -1,5 +1,4 @@
 class RecordStudyActivity
-
     def self.call(user:, duration: 0, is_exam: false, date: Date.current)
         new(user, duration, is_exam, date).call
     end
@@ -15,9 +14,7 @@ class RecordStudyActivity
         activity = @user.study_activities.find_or_initialize_by(activity_date: @date)
         activity.total_duration_seconds += @duration
         activity.exam_attempts_count += 1 if @is_exam
-        
         activity.save!
-
         activity
     rescue StandardError => e
         Rails.logger.error "Failed to record study activity: #{e.message}"

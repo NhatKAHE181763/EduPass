@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_01_085232) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_02_024939) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -65,6 +65,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_01_085232) do
     t.index ["user_id"], name: "index_exam_plans_on_user_id"
   end
 
+  create_table "study_activities", force: :cascade do |t|
+    t.date "activity_date"
+    t.datetime "created_at", null: false
+    t.integer "exam_attempts_count", default: 0
+    t.integer "total_duration_seconds", default: 0
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["user_id", "activity_date"], name: "index_study_activities_on_user_id_and_activity_date", unique: true
+    t.index ["user_id"], name: "index_study_activities_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.datetime "confirmation_sent_at"
     t.string "confirmation_token"
@@ -92,4 +103,5 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_01_085232) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "exam_plans", "users"
+  add_foreign_key "study_activities", "users"
 end

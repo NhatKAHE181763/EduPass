@@ -23,7 +23,7 @@
         <tbody>
           <% @exam_plans.each do |plan| %>
             <tr>
-              <td><%= link_to plan.plan_name, exam_plan_path(plan), class: "text-decoration-none" %></td>
+              <td><%= link_to plan.plan_name, edit_exam_plan_path(plan), class: "text-decoration-none fw-semibold text-dark" %></td>
               <td><%= plan.exam_type.titleize %></td>
               <td><%= plan.exam_date.strftime("%d/%m/%Y") %></td>
               <td><%= plan.target_score %></td>
@@ -34,7 +34,15 @@
               </td>
               <td class="text-end">
                 <%= link_to "Sửa", edit_exam_plan_path(plan), class: "btn btn-sm btn-outline-primary me-1" %>
-                <%= link_to "Xóa", exam_plan_path(plan), method: :delete, data: { turbo_confirm: "Bạn có chắc chắn muốn xóa kế hoạch này?" }, class: "btn btn-sm btn-outline-danger" %>
+                <%= link_to "Xóa", exam_plan_path(plan),
+                            data: {
+                              turbo_method: :delete,
+                              turbo_confirm: "Bạn có chắc chắn muốn xóa kế hoạch thi <strong>#{plan.plan_name}</strong>?<br><span class='text-muted small'>Hành động này sẽ xóa vĩnh viễn kế hoạch và không thể hoàn tác.</span>",
+                              turbo_confirm_title: "Xác nhận xóa kế hoạch",
+                              turbo_confirm_icon: "danger",
+                              turbo_confirm_text: "Xóa kế hoạch"
+                            },
+                            class: "btn btn-sm btn-outline-danger" %>
               </td>
             </tr>
           <% end %>

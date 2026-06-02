@@ -1,13 +1,10 @@
 class ExamPlansController < ApplicationController
-  before_action :set_exam_plan, only: %i[ show edit update destroy ]
+  before_action :set_exam_plan, only: %i[ edit update destroy ]
   before_action :authenticate_user!
 
   def index
     authorize ExamPlan
     @exam_plans = policy_scope(ExamPlan).order(exam_date: :asc)
-  end
-
-  def show
   end
 
   def new

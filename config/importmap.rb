@@ -11,3 +11,4 @@ pin "@popperjs/core", to: "https://ga.jspm.io/npm:@popperjs/core@2.11.8/dist/esm
 pin "bootstrap", to: "https://ga.jspm.io/npm:bootstrap@5.3.3/dist/js/bootstrap.esm.js"
 pin "chart.js", to: "https://ga.jspm.io/npm:chart.js@4.4.3/dist/chart.js"
 pin "sortablejs", to: "https://ga.jspm.io/npm:sortablejs@1.15.3/modular/sortable.esm.js"
+pin "sweetalert2" # @11.26.25

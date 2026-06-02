@@ -21,9 +21,14 @@ Rails.application.routes.draw do
     resource :password, only: [ :edit, :update ], path: "change_password"
   end
 
-  resources :exam_plans
+  resources :exam_plans, except: [:show]
+
+  namespace :students do
+    resource :dashboard, only: [:show], controller: "dashboard"
+  end
+
   root "home#index"
 
   # Solid Queue dashboard
-  mount MissionControl::Jobs::Engine => "/jobs"
+  # mount MissionControl::Jobs::Engine => "/jobs"
 end

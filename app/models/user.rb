@@ -14,6 +14,7 @@ class User < ApplicationRecord
 
   has_one_attached :avatar
   has_many :exam_plans, dependent: :destroy
+  has_many :study_activities, dependent: :destroy
 
   # Hàm xử lý logic khi nhận data từ Google trả về
   def self.from_omniauth(auth)

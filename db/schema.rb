@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_02_024939) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_02_083648) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -52,6 +52,35 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_02_024939) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "courses", force: :cascade do |t|
+    t.integer "course_type"
+    t.datetime "created_at", null: false
+    t.bigint "created_by_id", null: false
+    t.boolean "is_premium"
+    t.integer "level"
+    t.string "slug"
+    t.string "title"
+    t.datetime "updated_at", null: false
+    t.index ["created_by_id"], name: "index_courses_on_created_by_id"
+    t.index ["slug"], name: "index_courses_on_slug", unique: true
+  end
+
+  create_table "exam_attempts", force: :cascade do |t|
+    t.integer "actual_duration_seconds"
+    t.integer "correct_count"
+    t.datetime "created_at", null: false
+    t.bigint "exam_id", null: false
+    t.decimal "score", precision: 5, scale: 2
+    t.datetime "started_at"
+    t.integer "status"
+    t.datetime "submitted_at"
+    t.integer "total_questions"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["exam_id"], name: "index_exam_attempts_on_exam_id"
+    t.index ["user_id"], name: "index_exam_attempts_on_user_id"
+  end
+
   create_table "exam_plans", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.date "exam_date"
@@ -63,6 +92,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_02_024939) do
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
     t.index ["user_id"], name: "index_exam_plans_on_user_id"
+  end
+
+  create_table "exams", force: :cascade do |t|
+    t.bigint "course_id", null: false
+    t.datetime "created_at", null: false
+    t.bigint "created_by_id", null: false
+    t.integer "duration_minutes"
+    t.string "slug"
+    t.integer "status"
+    t.string "title"
+    t.datetime "updated_at", null: false
+    t.index ["course_id"], name: "index_exams_on_course_id"
+    t.index ["created_by_id"], name: "index_exams_on_created_by_id"
+    t.index ["slug"], name: "index_exams_on_slug", unique: true
   end
 
   create_table "study_activities", force: :cascade do |t|
@@ -102,6 +145,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_02_024939) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "courses", "users", column: "created_by_id"
+  add_foreign_key "exam_attempts", "exams"
+  add_foreign_key "exam_attempts", "users"
   add_foreign_key "exam_plans", "users"
+  add_foreign_key "exams", "courses"
+  add_foreign_key "exams", "users", column: "created_by_id"
   add_foreign_key "study_activities", "users"
 end

@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  title: MyString
+  slug: MyString
+  course_type: 1
+  lever: 1
+  is_premium: false
+  created_by: one
+
+two:
+  title: MyString
+  slug: MyString
+  course_type: 1
+  lever: 1
+  is_premium: false
+  created_by: two

@@ -1,0 +1,23 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: one
+  exam: one
+  status: 1
+  score: 9.99
+  total_questions: 1
+  correct_count: 1
+  started_at: 2026-06-02 15:36:48
+  submitted_at: 2026-06-02 15:36:48
+  actual_duration_seconds: 1
+
+two:
+  user: two
+  exam: two
+  status: 1
+  score: 9.99
+  total_questions: 1
+  correct_count: 1
+  started_at: 2026-06-02 15:36:48
+  submitted_at: 2026-06-02 15:36:48
+  actual_duration_seconds: 1

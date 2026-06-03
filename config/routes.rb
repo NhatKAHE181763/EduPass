@@ -21,10 +21,11 @@ Rails.application.routes.draw do
     resource :password, only: [ :edit, :update ], path: "change_password"
   end
 
-  resources :exam_plans, except: [:show]
+  resources :exam_plans, except: [ :show ]
 
   namespace :students do
-    resource :dashboard, only: [:show], controller: "dashboard"
+    resource :dashboard, only: [ :show ], controller: "dashboard"
+    get "dashboard/weekly_activity", to: "dashboard#weekly_activity"
   end
 
   root "home#index"

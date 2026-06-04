@@ -1,0 +1,22 @@
+<div class="nested-fields card shadow-sm mb-3 border-0 bg-light">
+  <div class="card-body">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <div class="form-check form-switch">
+        <%= f.check_box :is_correct, class: "form-check-input", role: "switch" %>
+        <%= f.label :is_correct, "ĐÂY LÀ ĐÁP ÁN ĐÚNG", class: "form-check-label fw-bold text-success" %>
+      </div>
+      <%= f.hidden_field :_destroy %>
+      <button type="button" data-action="click->nested-form#remove" class="btn btn-sm btn-outline-danger">Thùng rác</button>
+    </div>
+    
+    <div class="mb-3">
+      <%= f.label :content, "Nội dung đáp án *", class: "form-label fw-bold" %>
+      <%= f.text_area :content, class: "form-control", rows: 2, required: true %>
+    </div>
+
+    <div>
+      <%= f.label :explanation, "Giải thích (tại sao đáp án này đúng/sai)", class: "form-label text-muted" %>
+      <%= f.text_area :explanation, class: "form-control", rows: 2 %>
+    </div>
+  </div>
+</div>

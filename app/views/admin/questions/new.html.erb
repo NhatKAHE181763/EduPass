@@ -1,0 +1,13 @@
+<div class="mb-4 d-flex justify-content-between align-items-center">
+  <div>
+    <h2 class="fw-bold mb-0">Thêm Câu hỏi mới</h2>
+    <p class="text-muted mb-0">Phần thi: <%= @section.title %></p>
+  </div>
+  <%= link_to "Quay lại", admin_exam_section_path(@exam, @section), class: "btn btn-outline-secondary" %>
+</div>
+
+<div class="card shadow-sm border-0">
+  <div class="card-body">
+    <%= render "form", question: @question %>
+  </div>
+</div>

@@ -37,10 +37,11 @@ Rails.application.routes.draw do
         patch :toggle_status
       end
 
-      resources :sections, except: [ :index, :show ] do
+      resources :sections, except: [ :index ] do
         collection do
           patch :reorder
         end
+        resources :questions, except: [ :index, :show ]
       end
     end
   end

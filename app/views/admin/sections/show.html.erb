@@ -1,0 +1,105 @@
+<div class="mb-4 d-flex justify-content-between align-items-center">
+  <div>
+    <h2 class="fw-bold mb-0"><%= @section.title %></h2>
+    <p class="text-muted mb-0">Thuộc bài thi: <%= link_to @exam.title, edit_admin_exam_path(@exam) %></p>
+  </div>
+  <div>
+    <%= link_to "Chỉnh sửa Section", edit_admin_exam_section_path(@exam, @section), class: "btn btn-outline-primary" %>
+  </div>
+</div>
+
+<!-- THÔNG TIN SECTION CHUNG -->
+<div class="card shadow-sm border-0 mb-5">
+  <div class="card-body">
+    <div class="row">
+      <div class="col-md-8">
+        <h5 class="fw-bold text-primary mb-3">Nội dung bài đọc/nghe</h5>
+        <% if @section.reading? %>
+          <div class="p-3 bg-light rounded" style="max-height: 400px; overflow-y: auto;">
+            <%= @section.passage.presence || "<span class='text-muted fst-italic'>Chưa nhập nội dung bài đọc</span>".html_safe %>
+          </div>
+        <% elsif @section.listening? %>
+          <% if @section.audio_file.attached? %>
+            <audio controls class="w-100 mt-2">
+              <source src="<%= url_for(@section.audio_file) %>" type="<%= @section.audio_file.content_type %>">
+            </audio>
+          <% else %>
+            <p class="text-muted fst-italic">Chưa tải lên file âm thanh.</p>
+          <% end %>
+        <% end %>
+      </div>
+      <div class="col-md-4 border-start">
+        <h5 class="fw-bold mb-3">Thông tin</h5>
+        <ul class="list-unstyled mb-0">
+          <li class="mb-2"><strong>Loại:</strong> <span class="badge bg-secondary"><%= @section.section_type.upcase %></span></li>
+          <li class="mb-2"><strong>Hướng dẫn:</strong> <%= @section.instruction.presence || "Không có" %></li>
+          <li><strong>Tổng số câu hỏi:</strong> <%= @section.questions.count %></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="my-5">
+
+<!-- DANH SÁCH CÂU HỎI -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h3 class="fw-bold mb-0">Danh sách Câu hỏi</h3>
+  <div class="dropdown">
+    <button class="btn btn-success dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+      + Thêm Câu hỏi
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end">
+      <!-- Mới hỗ trợ làm Multiple Choice trước theo yêu cầu -->
+      <li><%= link_to "Trắc nghiệm (Multiple Choice)", new_admin_exam_section_question_path(@exam, @section, type: 'multiple_choice'), class: "dropdown-item" %></li>
+      <li><%= link_to "Điền từ (Fill in Blank)", "#", class: "dropdown-item disabled text-muted" %></li>
+      <li><%= link_to "Ghép đôi (Matching)", "#", class: "dropdown-item disabled text-muted" %></li>
+    </ul>
+  </div>
+</div>
+
+<div class="card shadow-sm border-0">
+  <div class="list-group list-group-flush">
+    <% @section.questions.order(:order_index).each_with_index do |question, index| %>
+      <div class="list-group-item p-4">
+        <div class="d-flex justify-content-between mb-3">
+          <h5 class="fw-bold mb-0">Câu <%= index + 1 %></h5>
+          <div class="d-flex gap-2">
+            <%= link_to "Sửa", edit_admin_exam_section_question_path(@exam, @section, question), class: "btn btn-sm btn-outline-primary" %>
+            <%= button_to "Xóa", admin_exam_section_question_path(@exam, @section, question), method: :delete, class: "btn btn-sm btn-outline-danger", data: { turbo_confirm: "Xóa câu hỏi này?" } %>
+          </div>
+        </div>
+        
+        <!-- Nội dung câu hỏi (Trix Editor) -->
+        <div class="mb-4">
+          <%= question.content %>
+        </div>
+
+        <!-- Trắc nghiệm: Hiển thị các đáp án -->
+        <% if question.multiple_choice? %>
+          <div class="ms-3 ps-3 border-start border-3 border-secondary">
+            <% question.answers.each do |ans| %>
+              <div class="mb-3 <%= ans.is_correct ? 'text-success fw-bold' : 'text-muted' %>">
+                <div class="d-flex align-items-center gap-2">
+                  <span style="font-size: 1.2rem;"><%= ans.is_correct ? '✓' : '○' %></span>
+                  <span><%= ans.content %></span>
+                </div>
+                <% if ans.explanation.present? %>
+                  <div class="ms-4 p-2 bg-light rounded mt-1 fst-italic" style="font-size: 0.9em; font-weight: normal;">
+                    Giải thích: <%= ans.explanation %>
+                  </div>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+    
+    <% if @section.questions.empty? %>
+      <div class="p-5 text-center text-muted">
+        Chưa có câu hỏi nào. Bạn hãy ấn nút Thêm Câu hỏi nhé!
+      </div>
+    <% end %>
+  </div>
+</div>

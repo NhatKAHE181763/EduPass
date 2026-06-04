@@ -1,10 +1,13 @@
 class Admin::SectionsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_exam
-  before_action :set_section, only: %i[edit update destroy]
+  before_action :set_section, only: %i[show edit update destroy]
 
   def new
     @section = @exam.sections.build(section_type: :reading)
+  end
+
+  def show
   end
 
   def create

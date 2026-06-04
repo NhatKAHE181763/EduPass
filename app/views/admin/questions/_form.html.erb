@@ -1,0 +1,61 @@
+<%= form_with(model: [:admin, @exam, @section, question], class: "needs-validation") do |f| %>
+  <% if question.errors.any? %>
+    <div class="alert alert-danger">
+      <h6 class="alert-heading fw-bold">Có lỗi xảy ra:</h6>
+      <ul class="mb-0">
+        <% question.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%= f.hidden_field :question_type %>
+
+  <div class="mb-3">
+    <%= f.label :content, "Nội dung câu hỏi *", class: "form-label fw-bold" %>
+    <%= f.rich_text_area :content, class: "form-control bg-white", style: "min-height: 150px;" %>
+  </div>
+
+  <div class="mb-3">
+    <%= f.label :explanation, "Giải thích chung cho cả câu hỏi (hiển thị sau khi thi)", class: "form-label fw-bold" %>
+    <%= f.rich_text_area :explanation, class: "form-control bg-white", style: "min-height: 100px;" %>
+  </div>
+
+  <div class="form-check mb-4">
+    <%= f.check_box :allow_multiple, class: "form-check-input" %>
+    <%= f.label :allow_multiple, "Cho phép chọn nhiều đáp án đúng (Multiple correct answers)", class: "form-check-label text-primary fw-bold" %>
+  </div>
+
+  <hr class="my-4">
+
+  <!-- VÙNG QUẢN LÝ ĐÁP ÁN -->
+  <div data-controller="nested-form">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h4 class="fw-bold mb-0">Các đáp án (Answers)</h4>
+      <!-- Nút gọi hàm add() của Stimulus -->
+      <button type="button" data-action="click->nested-form#add" class="btn btn-sm btn-success">
+        + Thêm đáp án
+      </button>
+    </div>
+
+    <!-- Vùng chứa danh sách các Form nhập Đáp án -->
+    <div data-nested-form-target="target">
+      <%= f.fields_for :answers do |answer_form| %>
+        <%= render "answer_fields", f: answer_form %>
+      <% end %>
+    </div>
+
+    <!-- Template ẩn dùng để nhân bản khi bấm Thêm đáp án -->
+    <template data-nested-form-target="template">
+      <%= f.fields_for :answers, Answer.new, child_index: 'NEW_RECORD' do |answer_form| %>
+        <%= render "answer_fields", f: answer_form %>
+      <% end %>
+    </template>
+  </div>
+
+  <div class="d-flex justify-content-end gap-2 mt-4">
+    <%= link_to "Hủy", admin_exam_section_path(@exam, @section), class: "btn btn-light" %>
+    <%= f.submit question.new_record? ? "Tạo Câu hỏi" : "Cập nhật", class: "btn btn-primary px-4" %>
+  </div>
+<% end %>

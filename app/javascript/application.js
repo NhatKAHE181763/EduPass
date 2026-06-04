@@ -8,7 +8,7 @@ import "bootstrap"
 import Swal from "sweetalert2"
 
 // Cấu hình SweetAlert2 làm trình xác nhận mặc định cho Turbo
-Turbo.setConfirmMethod((message, element) => {
+Turbo.config.forms.confirm = (message, element) => {
   const title = element.dataset.turboConfirmTitle || "Xác nhận hành động"
   const iconRaw = element.dataset.turboConfirmIcon || "warning"
   
@@ -45,5 +45,5 @@ Turbo.setConfirmMethod((message, element) => {
       resolve(result.isConfirmed)
     })
   })
-})
+}
 

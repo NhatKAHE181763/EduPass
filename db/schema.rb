@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_02_083648) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_04_071233) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -52,10 +52,22 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_02_083648) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "answers", force: :cascade do |t|
+    t.text "content"
+    t.datetime "created_at", null: false
+    t.text "explanation"
+    t.boolean "is_correct", default: false
+    t.string "match_key"
+    t.bigint "question_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["question_id"], name: "index_answers_on_question_id"
+  end
+
   create_table "courses", force: :cascade do |t|
     t.integer "course_type"
     t.datetime "created_at", null: false
     t.bigint "created_by_id", null: false
+    t.text "description"
     t.boolean "is_premium"
     t.integer "level"
     t.string "slug"
@@ -108,6 +120,29 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_02_083648) do
     t.index ["slug"], name: "index_exams_on_slug", unique: true
   end
 
+  create_table "questions", force: :cascade do |t|
+    t.boolean "allow_multiple", default: false
+    t.text "content"
+    t.datetime "created_at", null: false
+    t.text "explanation"
+    t.integer "order_index"
+    t.integer "question_type"
+    t.bigint "section_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["section_id"], name: "index_questions_on_section_id"
+  end
+
+  create_table "sections", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "exam_id", null: false
+    t.string "instruction"
+    t.integer "order_index"
+    t.integer "section_type"
+    t.string "title"
+    t.datetime "updated_at", null: false
+    t.index ["exam_id"], name: "index_sections_on_exam_id"
+  end
+
   create_table "study_activities", force: :cascade do |t|
     t.date "activity_date"
     t.datetime "created_at", null: false
@@ -117,6 +152,26 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_02_083648) do
     t.bigint "user_id", null: false
     t.index ["user_id", "activity_date"], name: "index_study_activities_on_user_id_and_activity_date", unique: true
     t.index ["user_id"], name: "index_study_activities_on_user_id"
+  end
+
+  create_table "taggings", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "tag_id", null: false
+    t.bigint "taggable_id", null: false
+    t.string "taggable_type", null: false
+    t.datetime "updated_at", null: false
+    t.index ["tag_id"], name: "index_taggings_on_tag_id"
+    t.index ["taggable_type", "taggable_id"], name: "index_taggings_on_taggable"
+  end
+
+  create_table "tags", force: :cascade do |t|
+    t.integer "category"
+    t.string "color"
+    t.datetime "created_at", null: false
+    t.string "name"
+    t.string "slug"
+    t.datetime "updated_at", null: false
+    t.index ["slug"], name: "index_tags_on_slug", unique: true
   end
 
   create_table "users", force: :cascade do |t|
@@ -133,7 +188,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_02_083648) do
     t.datetime "remember_created_at"
     t.datetime "reset_password_sent_at"
     t.string "reset_password_token"
-    t.integer "role", default: 0
+    t.integer "role", default: 1
     t.string "uid"
     t.string "unconfirmed_email"
     t.datetime "updated_at", null: false
@@ -145,11 +200,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_02_083648) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "answers", "questions"
   add_foreign_key "courses", "users", column: "created_by_id"
   add_foreign_key "exam_attempts", "exams"
   add_foreign_key "exam_attempts", "users"
   add_foreign_key "exam_plans", "users"
   add_foreign_key "exams", "courses"
   add_foreign_key "exams", "users", column: "created_by_id"
+  add_foreign_key "questions", "sections"
+  add_foreign_key "sections", "exams"
   add_foreign_key "study_activities", "users"
+  add_foreign_key "taggings", "tags"
 end

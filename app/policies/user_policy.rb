@@ -1,27 +1,27 @@
 class UserPolicy < ApplicationPolicy
   def index?
-    user.admin?
+    user&.admin?
   end
 
   def show?
-    user.admin? || record == user
+    user&.admin? || record == user
   end
 
   def create?
-    user.admin?
+    user&.admin?
   end
 
   def update?
-    user.admin? || record == user
+    user&.admin? || record == user
   end
 
   def destroy?
-    user.admin?
+    user&.admin?
   end
 
   class Scope < ApplicationPolicy::Scope
     def resolve
-      if user.admin?
+      if user&.admin?
         scope.all
       else
         # filter deleted users khỏi queries bằng kept của gem discard

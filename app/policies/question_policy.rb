@@ -20,15 +20,15 @@ class QuestionPolicy < ApplicationPolicy
 
   def manage_question?
     exam = record.section.exam
-    user.admin? || (user.teacher? && exam.created_by_id == user.id)
+    user&.admin? || (user&.teacher? && exam.created_by_id == user&.id)
   end
 
   class Scope < ApplicationPolicy::Scope
     def resolve
-      if user.admin?
+      if user&.admin?
         scope.all
-      elsif user.teacher?
-        scope.joins(section: :exam).where(exams: { created_by_id: user.id })
+      elsif user&.teacher?
+        scope.joins(section: :exam).where(exams: { created_by_id: user&.id })
       else
         scope.joins(section: :exam).where(exams: { status: Exam.statuses[:published] })
         # thêm điều kiện để chỉ hiển thị câu hỏi của exam đã được mua hoặc exam miễn phí

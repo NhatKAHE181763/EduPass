@@ -1,0 +1,98 @@
+<div class="mb-4">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><%= link_to "Khóa học", courses_path, class: "text-decoration-none" %></li>
+      <li class="breadcrumb-item active" aria-current="page"><%= @course.title %></li>
+    </ol>
+  </nav>
+</div>
+
+<div class="row g-4 mb-5">
+  <!-- Cột trái: Thông tin khóa học (Sticky) -->
+  <div class="col-lg-4">
+    <div class="card shadow-sm border-0 sticky-lg-top" style="top: 20px; z-index: 1;">
+      <% if @course.thumbnail.attached? %>
+        <%= image_tag @course.thumbnail, class: "card-img-top w-100", style: "aspect-ratio: 16/9; object-fit: cover;" %>
+      <% else %>
+        <div class="card-img-top bg-light d-flex align-items-center justify-content-center text-muted" style="aspect-ratio: 16/9;">
+          Chưa có hình ảnh
+        </div>
+      <% end %>
+      
+      <div class="card-body p-4">
+        <h3 class="card-title fw-bold mb-3"><%= @course.title %></h3>
+        
+        <div class="d-flex gap-2 mb-3">
+          <span class="badge bg-primary bg-opacity-10 text-primary"><%= @course.course_type.upcase %></span>
+          <span class="badge bg-info bg-opacity-10 text-dark border"><%= @course.level.titleize %></span>
+          <% if @course.is_premium? %>
+            <span class="badge bg-warning text-dark">Premium</span>
+          <% end %>
+        </div>
+        
+        <hr>
+        
+        <h6 class="fw-bold mb-2">Giới thiệu:</h6>
+        <p class="text-muted"><%= simple_format(@course.description) %></p>
+        
+        <div class="bg-light p-3 rounded mt-4">
+          <div class="d-flex justify-content-between mb-2">
+            <span class="text-muted">Giảng viên:</span>
+            <strong><%= @course.created_by&.full_name || "Admin" %></strong>
+          </div>
+          <div class="d-flex justify-content-between">
+            <span class="text-muted">Tổng số đề thi:</span>
+            <strong><%= @exams.count %></strong>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cột phải: Danh sách đề thi -->
+  <div class="col-lg-8">
+    <div class="card shadow-sm border-0">
+      <div class="card-header bg-white border-bottom p-4">
+        <h4 class="mb-0 fw-bold">Danh sách Bài thi (<%= @exams.count %>)</h4>
+      </div>
+      
+      <div class="card-body p-0">
+        <div class="list-group list-group-flush">
+          <% if @exams.any? %>
+            <% @exams.each do |exam| %>
+              <% is_locked = @course.is_premium? && (!user_signed_in? || !current_user.has_active_subscription?) %>
+              <div class="list-group-item p-4 d-flex justify-content-between align-items-center hover-bg-light">
+                <div>
+                  <h5 class="mb-1 fw-bold text-dark">
+                    <% if is_locked %>
+                      <span class="text-warning me-1">🔒</span>
+                    <% end %>
+                    <%= exam.title %>
+                  </h5>
+                  <div class="text-muted small mt-2">
+                    <span class="me-3">⏱ <%= exam.duration_minutes %> phút</span>
+                  </div>
+                </div>
+                
+                <div>
+                  <%= link_to is_locked ? "Nâng cấp" : "Chi tiết", exam_path(exam), class: "btn #{is_locked ? 'btn-warning text-dark' : 'btn-outline-primary'} px-4 rounded-pill fw-bold" %>
+                </div>
+              </div>
+            <% end %>
+          <% else %>
+            <div class="p-5 text-center text-muted">
+              <span style="font-size: 3rem;">📄</span>
+              <p class="mt-3">Khóa học này hiện chưa có bài thi nào được phát hành.</p>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .hover-bg-light:hover {
+    background-color: #f8f9fa;
+  }
+</style>

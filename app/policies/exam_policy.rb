@@ -4,30 +4,29 @@ class ExamPolicy < ApplicationPolicy
   end
 
   def show?
-    return true if record.published?
-    # draft
-    user.admin? || record.created_by_id == user.id
+    return true if user&.admin? || user&.teacher?
+    record.published?
   end
 
   def create?
-    user.admin? || user.teacher?
+    user&.admin? || user&.teacher?
   end
 
   def update?
-    user.admin? || (user.teacher? && record.created_by_id == user.id)
+    user&.admin? || (user&.teacher? && record.created_by_id == user&.id)
   end
 
   def destroy?
-    user.admin? || (user.teacher? && record.created_by_id == user.id)
+    user&.admin? || (user&.teacher? && record.created_by_id == user&.id)
   end
 
   class Scope < ApplicationPolicy::Scope
     # NOTE: Be explicit about which records you allow access to!
     def resolve
-      if user.admin?
+      if user&.admin?
         scope.all
-      elsif user.teacher?
-        scope.where(created_by_id: user.id).or(scope.where(status: :published))
+      elsif user&.teacher?
+        scope.where(created_by_id: user&.id).or(scope.where(status: :published))
       else
         scope.where(status: :published)
       end

@@ -1,0 +1,67 @@
+<%= form_with(model: [:admin, exam], class: "needs-validation") do |f| %>
+  <% if exam.errors.any? %>
+    <div class="alert alert-danger">
+      <h6 class="alert-heading fw-bold">Có lỗi xảy ra:</h6>
+      <ul class="mb-0">
+        <% exam.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="row g-3">
+    <div class="col-md-8">
+      <div class="card shadow-sm border-0 mb-4">
+        <div class="card-header bg-white border-bottom">
+          <h5 class="mb-0 fw-bold">Thông tin Cơ bản</h5>
+        </div>
+        <div class="card-body">
+          <div class="mb-3">
+            <%= f.label :title, "Tên bài thi *", class: "form-label fw-bold" %>
+            <%= f.text_field :title, class: "form-control", required: true, placeholder: "VD: IELTS Mock Test 1" %>
+          </div>
+
+          <div class="mb-3">
+            <%= f.label :slug, "Đường dẫn (Slug)", class: "form-label fw-bold" %>
+            <%= f.text_field :slug, class: "form-control", placeholder: "Để trống sẽ tự động tạo từ tên bài thi" %>
+            <div class="form-text">URL thân thiện cho SEO (chỉ dùng chữ thường, số và dấu gạch ngang).</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card shadow-sm border-0 mb-4">
+        <div class="card-header bg-white border-bottom">
+          <h5 class="mb-0 fw-bold">Cài đặt</h5>
+        </div>
+        <div class="card-body">
+          <div class="mb-3">
+            <%= f.label :course_id, "Thuộc khóa học *", class: "form-label fw-bold" %>
+            <%= f.collection_select :course_id, Course.order(:title), :id, :title, { prompt: "Chọn khóa học..." }, { class: "form-select", required: true } %>
+          </div>
+          <div class="mb-3" data-controller="choices">
+            <%= f.label :tag_ids, "Gắn Tags", class: "form-label fw-bold" %>
+            <%= f.collection_select :tag_ids, Tag.order(:name), :id, :name, {}, { multiple: true, class: "form-control", data: { choices_target: "select" } } %>
+            <div class="form-text">Chọn các kỹ năng, phần thi hoặc cấp độ phù hợp.</div>
+          </div>
+
+
+          <div class="mb-3">
+            <%= f.label :duration_minutes, "Thời gian làm bài (Phút) *", class: "form-label fw-bold" %>
+            <div class="input-group">
+              <%= f.number_field :duration_minutes, class: "form-control", min: 1, required: true %>
+              <span class="input-group-text">Phút</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="d-flex justify-content-end gap-2 mt-3">
+    <%= link_to "Hủy", admin_exams_path, class: "btn btn-light" %>
+    <%= f.submit exam.new_record? ? "Tạo bài thi" : "Cập nhật", class: "btn btn-primary px-4" %>
+  </div>
+<% end %>

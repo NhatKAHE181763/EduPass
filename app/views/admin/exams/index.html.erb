@@ -1,0 +1,60 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2 class="fw-bold">Quản lý Bài thi</h2>
+  <%= link_to "Tạo Bài thi mới", new_admin_exam_path, class: "btn btn-primary" %>
+</div>
+
+<div class="card shadow-sm border-0">
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th class="ps-4">Tên bài thi</th>
+            <th>Khóa học</th>
+            <th>Thời gian</th>
+            <th>Trạng thái</th>
+            <th class="text-end pe-4">Hành động</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if @exams.any? %>
+            <% @exams.each do |exam| %>
+              <tr>
+                <td class="ps-4">
+                  <div class="fw-bold text-dark"><%= exam.title %></div>
+                  <div class="text-muted small"><%= exam.slug %></div>
+                </td>
+                <td>
+                  <span class="badge bg-info bg-opacity-10 text-info border"><%= exam.course.title %></span>
+                </td>
+                <td><%= exam.duration_minutes %> phút</td>
+                <td>
+                  <% if exam.published? %>
+                    <span class="badge bg-success bg-opacity-10 text-success border border-success-subtle">Published</span>
+                  <% else %>
+                    <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary-subtle">Draft</span>
+                  <% end %>
+                </td>
+                <td class="text-end pe-4">
+                  <div class="d-flex justify-content-end gap-2">
+                    <%= button_to toggle_status_admin_exam_path(exam), method: :patch, class: "btn btn-sm #{exam.published? ? 'btn-outline-warning' : 'btn-outline-success'}" do %>
+                      <i class="bi <%= exam.published? ? 'bi-eye-slash' : 'bi-eye' %>"></i>
+                      <%= exam.published? ? 'Unpublish' : 'Publish' %>
+                    <% end %>
+                    
+                    <%= link_to "Sửa", edit_admin_exam_path(exam), class: "btn btn-sm btn-outline-primary" %>
+                    <%= link_to "Preview", admin_exam_path(exam), class: "btn btn-sm btn-outline-info" %>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          <% else %>
+            <tr>
+              <td colspan="5" class="text-center py-4 text-muted">Chưa có bài thi nào.</td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

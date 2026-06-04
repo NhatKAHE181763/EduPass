@@ -1,0 +1,48 @@
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      
+      <div class="mb-4">
+        <%= link_to "← Trở lại Khóa học", course_path(@exam.course), class: "text-decoration-none text-muted fw-bold" %>
+      </div>
+
+      <div class="card shadow border-0 overflow-hidden">
+        <div class="card-body p-5 text-center">
+          
+          <% if @is_locked %>
+            <!-- GIAO DIỆN BỊ KHÓA -->
+            <div class="mb-4">
+              <div class="d-inline-flex align-items-center justify-content-center bg-warning bg-opacity-10 text-warning rounded-circle" style="width: 80px; height: 80px;">
+                <span style="font-size: 2.5rem;">🔒</span>
+              </div>
+            </div>
+            <h2 class="fw-bold mb-3"><%= @exam.title %></h2>
+            <p class="text-muted mb-4">Đây là bài thi thuộc Khóa học Premium. Bạn cần nâng cấp tài khoản để có thể tham gia làm bài.</p>
+            
+            <%= link_to "Nâng cấp Premium", "#", class: "btn btn-warning btn-lg px-5 fw-bold text-dark rounded-pill shadow-sm" %>
+          
+          <% else %>
+            <!-- GIAO DIỆN MỞ KHÓA -->
+            <div class="mb-4">
+              <div class="d-inline-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary rounded-circle" style="width: 80px; height: 80px;">
+                <span style="font-size: 2.5rem;">📝</span>
+              </div>
+            </div>
+            
+            <h2 class="fw-bold mb-3"><%= @exam.title %></h2>
+            
+            <div class="d-flex justify-content-center gap-4 mb-5 text-muted">
+              <div><strong>⏱ <%= @exam.duration_minutes %> phút</strong></div>
+              <div><strong>✨ Nhiều dạng câu hỏi</strong></div>
+            </div>
+            
+            <%= link_to "Bắt đầu làm bài", "#", class: "btn btn-primary btn-lg px-5 fw-bold rounded-pill shadow-sm" %>
+            <div class="form-text mt-3">Lưu ý: Thời gian đếm ngược sẽ bắt đầu ngay khi bạn ấn vào nút.</div>
+          <% end %>
+
+        </div>
+      </div>
+      
+    </div>
+  </div>
+</div>

@@ -10,22 +10,39 @@ Rails.application.routes.draw do
   # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
-  devise_for :users, controllers: {
-    sessions: "users/sessions",
-    registrations: "users/registrations",
-    omniauth_callbacks: "users/omniauth_callbacks"
+  devise_for :user, controllers: {
+    sessions: "user/sessions",
+    registrations: "user/registrations",
+    omniauth_callbacks: "user/omniauth_callbacks"
   }
 
-  namespace :users do
+  namespace :user do
     resource :profile, only: [ :edit, :update ]
     resource :password, only: [ :edit, :update ], path: "change_password"
   end
 
   resources :exam_plans, except: [ :show ]
+  resources :courses, only: [ :index, :show ]
+  resources :exams, only: [ :index, :show ]
 
-  namespace :students do
+  namespace :student do
     resource :dashboard, only: [ :show ], controller: "dashboard"
     get "dashboard/weekly_activity", to: "dashboard#weekly_activity"
+  end
+
+  namespace :admin do
+    resources :courses
+    resources :exams do
+      member do
+        patch :toggle_status
+      end
+
+      resources :sections, except: [ :index, :show ] do
+        collection do
+          patch :reorder
+        end
+      end
+    end
   end
 
   root "home#index"

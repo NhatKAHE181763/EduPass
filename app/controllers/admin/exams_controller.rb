@@ -1,0 +1,73 @@
+class Admin::ExamsController < ApplicationController
+  before_action :authenticate_user!
+  before_action :set_exam, only: %i[ show edit update destroy toggle_status ]
+
+  def index
+    # Dùng includes(:course) để tránh lỗi N+1 queries khi hiển thị danh sách
+    @exams = Exam.includes(:course).order(created_at: :desc)
+    authorize [ :admin, Exam ]
+  end
+
+  def show
+  end
+
+  def new
+    @exam = Exam.new
+    # Tự động gán sẵn course_id nếu truyền từ params (VD: Tạo bài thi từ trang chi tiết khóa học)
+    @exam.course_id = params[:course_id] if params[:course_id].present?
+    authorize [ :admin, @exam ]
+  end
+
+  def edit
+  end
+
+  def create
+    @exam = Exam.new(exam_params)
+    @exam.created_by = current_user # Gán người tạo là user đang đăng nhập
+    authorize [ :admin, @exam ]
+
+    if @exam.save
+      redirect_to admin_exam_path(@exam), notice: "Bài thi đã được tạo thành công."
+    else
+      render :new, status: :unprocessable_entity
+    end
+  end
+
+  def update
+    if @exam.update(exam_params)
+      redirect_to admin_exam_path(@exam), notice: "Cập nhật bài thi thành công."
+    else
+      render :edit, status: :unprocessable_entity
+    end
+  end
+
+  def destroy
+    @exam.destroy
+    redirect_to admin_exams_path, notice: "Bài thi đã bị xóa."
+  end
+
+  def toggle_status
+    if @exam.draft?
+      @exam.published!
+      notice = "Đã phát hành bài thi."
+    else
+      @exam.draft!
+      notice = "Đã chuyển bài thi về trạng thái nháp."
+    end
+
+    # Reload lại trang trước đó (hoặc về trang danh sách nếu lỗi)
+    redirect_back fallback_location: admin_exams_path, notice: notice
+  end
+
+  private
+
+  def set_exam
+    @exam = Exam.find_by!(slug: params[:id])
+    authorize [ :admin, @exam ]
+  end
+
+  def exam_params
+    params.require(:exam).permit(
+      :title, :slug, :course_id, :duration_minutes, tag_ids: [])
+  end
+end

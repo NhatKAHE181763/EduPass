@@ -1,0 +1,41 @@
+<%= form_with(model: [:admin, @exam, section], class: "needs-validation", data: { turbo_frame: "_top" }) do |f| %>
+  <% if section.errors.any? %>
+    <div class="alert alert-danger">
+      <h6 class="alert-heading fw-bold">Có lỗi xảy ra:</h6>
+      <ul class="mb-0">
+        <% section.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%= f.hidden_field :section_type %>
+
+  <div class="mb-3">
+    <%= f.label :title, "Tiêu đề Section *", class: "form-label fw-bold" %>
+    <%= f.text_field :title, class: "form-control", required: true, placeholder: "VD: Reading Passage 1" %>
+  </div>
+
+  <div class="mb-3">
+    <%= f.label :instruction, "Hướng dẫn làm bài", class: "form-label fw-bold" %>
+    <%= f.text_field :instruction, class: "form-control", placeholder: "VD: Read the passage and answer questions 1-5" %>
+  </div>
+
+  <% if section.reading? %>
+    <div class="mb-3">
+      <%= f.label :passage, "Nội dung bài đọc *", class: "form-label fw-bold" %>
+      <%= f.rich_text_area :passage, class: "form-control bg-white", style: "min-height: 300px;" %>
+    </div>
+  <% elsif section.listening? %>
+    <div class="mb-3">
+      <%= f.label :audio_file, "Audio File *", class: "form-label fw-bold" %>
+      <%= f.file_field :audio_file, class: "form-control", accept: "audio/*" %>
+    </div>
+  <% end %>
+
+  <div class="d-flex justify-content-end gap-2 mt-4">
+    <%= link_to "Hủy", edit_admin_exam_path(@exam), class: "btn btn-light" %>
+    <%= f.submit section.new_record? ? "Tạo Section" : "Cập nhật", class: "btn btn-primary px-4" %>
+  </div>
+<% end %>

@@ -1,0 +1,66 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2 class="fw-bold">Chi tiết Khóa học</h2>
+  <div>
+    <%= link_to "Sửa thông tin", edit_admin_course_path(@course), class: "btn btn-primary btn-sm me-2" %>
+    <%= link_to "Trở về danh sách", admin_courses_path, class: "btn btn-outline-secondary btn-sm" %>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-4 mb-4">
+    <div class="card shadow-sm border-0">
+      <% if @course.thumbnail.attached? %>
+        <%= image_tag @course.thumbnail, class: "card-img-top w-100", style: "aspect-ratio: 16/9; object-fit: cover;" %>
+      <% else %>
+        <div class="card-img-top bg-light d-flex align-items-center justify-content-center text-muted" style="aspect-ratio: 16/9;">
+          Chưa có thumbnail
+        </div>
+      <% end %>
+      <div class="card-body">
+        <h5 class="card-title fw-bold"><%= @course.title %></h5>
+        <p class="card-text text-muted mb-1">Slug: <%= @course.slug %></p>
+        <p class="card-text mt-3"><%= @course.description %></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-8">
+    <div class="card shadow-sm border-0">
+      <div class="card-header bg-white border-bottom">
+        <h5 class="mb-0 fw-bold py-2">Thông tin chung</h5>
+      </div>
+      <div class="card-body p-4">
+        <table class="table table-borderless mb-0 align-middle">
+          <tbody>
+            <tr>
+              <th style="width: 200px;" class="text-muted">Loại khóa học:</th>
+              <td><span class="badge bg-secondary"><%= @course.course_type.upcase %></span></td>
+            </tr>
+            <tr>
+              <th class="text-muted">Trình độ:</th>
+              <td><span class="badge bg-info text-dark"><%= @course.level.titleize %></span></td>
+            </tr>
+            <tr>
+              <th class="text-muted">Gói khóa học:</th>
+              <td>
+                <% if @course.is_premium? %>
+                  <span class="badge bg-warning text-dark"><i class="bi bi-star-fill"></i> Premium</span>
+                <% else %>
+                  <span class="badge bg-success">Miễn phí (Free)</span>
+                <% end %>
+              </td>
+            </tr>
+            <tr>
+              <th class="text-muted">Người tạo:</th>
+              <td><strong><%= @course.created_by&.full_name || @course.created_by&.email %></strong></td>
+            </tr>
+            <tr>
+              <th class="text-muted">Ngày tạo:</th>
+              <td><%= @course.created_at.strftime("%H:%M - %d/%m/%Y") %></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

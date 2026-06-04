@@ -1,0 +1,60 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2 class="fw-bold">Quản lý Khóa học</h2>
+  <%= link_to "Thêm Khóa học", new_admin_course_path, class: "btn btn-primary" %>
+</div>
+
+<div class="card shadow-sm border-0">
+  <div class="card-body p-0 table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead class="table-light">
+        <tr>
+          <th class="ps-3 py-3">Thumbnail</th>
+          <th class="py-3">Tên khóa học</th>
+          <th class="py-3">Loại</th>
+          <th class="py-3">Trình độ</th>
+          <th class="py-3">Premium</th>
+          <th class="text-end pe-3 py-3">Hành động</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if @courses.any? %>
+          <% @courses.each do |course| %>
+            <tr>
+              <td class="ps-3">
+                <% if course.thumbnail.attached? %>
+                  <%= image_tag course.thumbnail, class: "img-thumbnail border-0 shadow-sm", style: "width: 70px; height: 50px; object-fit: cover;" %>
+                <% else %>
+                  <div class="bg-light text-muted d-flex align-items-center justify-content-center rounded" style="width: 70px; height: 50px; font-size: 0.75rem;">No image</div>
+                <% end %>
+              </td>
+              <td>
+                <strong class="fs-6"><%= link_to course.title, admin_course_path(course), class: "text-decoration-none text-dark" %></strong>
+                <br>
+                <small class="text-muted"><%= course.slug %></small>
+              </td>
+              <td><span class="badge bg-secondary"><%= course.course_type.upcase %></span></td>
+              <td><span class="badge bg-info text-dark"><%= course.level.titleize %></span></td>
+              <td>
+                <% if course.is_premium? %>
+                  <span class="badge bg-warning text-dark"><i class="bi bi-star-fill"></i> Premium</span>
+                <% else %>
+                  <span class="badge bg-success">Free</span>
+                <% end %>
+              </td>
+              <td class="text-end pe-3">
+                <%= link_to "Sửa", edit_admin_course_path(course), class: "btn btn-sm btn-outline-primary" %>
+                <%= button_to "Xóa", admin_course_path(course), method: :delete, data: { turbo_confirm: "Bạn có chắc chắn muốn xóa khóa học này không?" }, class: "btn btn-sm btn-outline-danger d-inline-block ms-1" %>
+              </td>
+            </tr>
+          <% end %>
+        <% else %>
+          <tr>
+            <td colspan="6" class="text-center py-5 text-muted">
+              Không có khóa học nào. Hãy bấm "Thêm Khóa học" để bắt đầu.
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

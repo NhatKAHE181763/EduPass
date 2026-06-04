@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  section: one
+  question_type: 1
+  content: MyText
+  explanation: MyText
+  allow_multiple: false
+  order_index: 1
+
+two:
+  section: two
+  question_type: 1
+  content: MyText
+  explanation: MyText
+  allow_multiple: false
+  order_index: 1

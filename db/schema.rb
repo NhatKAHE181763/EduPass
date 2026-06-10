@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_08_022731) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_10_031958) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -131,6 +131,30 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_08_022731) do
     t.index ["question_id"], name: "index_matching_pairs_on_question_id"
   end
 
+  create_table "notes", force: :cascade do |t|
+    t.string "color"
+    t.text "content"
+    t.datetime "created_at", null: false
+    t.integer "end_offset"
+    t.bigint "exam_attempt_id", null: false
+    t.bigint "section_id", null: false
+    t.string "selected_text"
+    t.integer "start_offset"
+    t.datetime "updated_at", null: false
+    t.index ["exam_attempt_id"], name: "index_notes_on_exam_attempt_id"
+    t.index ["section_id"], name: "index_notes_on_section_id"
+  end
+
+  create_table "question_bookmarks", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "exam_attempt_id", null: false
+    t.bigint "question_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["exam_attempt_id", "question_id"], name: "index_question_bookmarks_on_exam_attempt_id_and_question_id", unique: true
+    t.index ["exam_attempt_id"], name: "index_question_bookmarks_on_exam_attempt_id"
+    t.index ["question_id"], name: "index_question_bookmarks_on_question_id"
+  end
+
   create_table "questions", force: :cascade do |t|
     t.boolean "allow_multiple", default: false
     t.text "content"
@@ -233,6 +257,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_08_022731) do
   add_foreign_key "exams", "courses"
   add_foreign_key "exams", "users", column: "created_by_id"
   add_foreign_key "matching_pairs", "questions"
+  add_foreign_key "notes", "exam_attempts"
+  add_foreign_key "notes", "sections"
+  add_foreign_key "question_bookmarks", "exam_attempts"
+  add_foreign_key "question_bookmarks", "questions"
   add_foreign_key "questions", "sections"
   add_foreign_key "sections", "exams"
   add_foreign_key "study_activities", "users"

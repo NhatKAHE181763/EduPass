@@ -29,7 +29,15 @@ Rails.application.routes.draw do
       post :submit
     end
   end
-  resources :exam_attempts, only: [ :show, :update ]
+
+  resources :exam_attempts, only: [ :show, :update ] do
+    resources :question_bookmarks, only: [] do
+      collection do
+        post :toggle
+      end
+    end
+    resources :notes, only: [ :create ]
+  end
 
   namespace :student do
     resource :dashboard, only: [ :show ], controller: "dashboard"

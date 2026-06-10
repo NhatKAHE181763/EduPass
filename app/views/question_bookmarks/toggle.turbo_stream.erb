@@ -1,0 +1,11 @@
+<%= turbo_stream.replace "bookmark_icon_#{@question.id}" do %>
+  <i id="bookmark_icon_<%= @question.id %>" class="bi <%= @is_bookmarked ? 'bi-flag-fill text-warning' : 'bi-flag text-muted' %> fs-6">
+  </i>
+<% end %>
+
+<%= turbo_stream.replace "minimap_bg_#{@question.id}" do %>
+  <div id="minimap_bg_<%= @question.id %>" 
+       class="position-absolute w-100 h-100 top-0 start-0 <%= 'bg-warning' if @is_bookmarked %>"
+       style="z-index: 1;">
+  </div>
+<% end %>

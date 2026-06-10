@@ -1,5 +1,4 @@
 class CoursesController < ApplicationController
-
   def index
     authorize Course
     @q = policy_scope(Course).ransack(params[:q])
@@ -16,10 +15,8 @@ class CoursesController < ApplicationController
 
     @q = base_exams.ransack(params[:q])
 
-    @exams = @q.result.includes(:tags).order(created_at: :desc)
+    @exams = @q.result.includes(:tags).order(created_at: :asc)
 
-    @exams = @exams.page(params[:page]).per(params[:per_page] || 1)
+    @exams = @exams.page(params[:page]).per(params[:per_page] || 5)
   end
-
-
 end

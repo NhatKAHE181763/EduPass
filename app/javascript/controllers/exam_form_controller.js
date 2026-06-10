@@ -17,16 +17,25 @@ export default class extends Controller {
     const questionId = match[1];
     const btn = this.navBtnTargets.find(b => b.dataset.questionId === questionId);
 
-    if (btn) {
-      if (event.target.value.trim() !== "") {
-        // Có đáp án -> Chuyển sang Nền xanh lá
-        btn.classList.remove("btn-outline-secondary");
-        btn.classList.add("btn-success", "text-white");
-      } else {
-        // Bỏ trống -> Trở về Nền trắng viền xám
-        btn.classList.remove("btn-success", "text-white");
-        btn.classList.add("btn-outline-secondary");
-      }
+    if (!btn) return;
+    let isAnswered = false;
+    const inputType = event.target.type;
+    // Nếu là checkbox/radio, ta đếm xem có cái nào cùng name đang được check không
+    if (inputType === "checkbox" || inputType === "radio") {
+      // Chú ý dùng CSS.escape để tránh lỗi ngoặc vuông [] trong selector
+      const safeName = CSS.escape(event.target.name);
+      const checkedInputs = document.querySelectorAll(`input[name="${safeName}"]:checked`);
+      isAnswered = checkedInputs.length > 0;
+    } else {
+      // Text input hoặc Select box
+      isAnswered = event.target.value.trim() !== "";
+    }
+    if (isAnswered) {
+      btn.classList.remove("btn-outline-secondary");
+      btn.classList.add("btn-success", "text-white");
+    } else {
+      btn.classList.remove("btn-success", "text-white");
+      btn.classList.add("btn-outline-secondary");
     }
   }
 

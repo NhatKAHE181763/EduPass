@@ -2,49 +2,12 @@
   <nav aria-label="breadcrumb">
     <ol class="breadcrumb mb-1">
       <li class="breadcrumb-item"><%= link_to "Khóa học", courses_path, class: "text-decoration-none" %></li>
-      <li class="breadcrumb-item <%= 'active' if params[:q].blank? %>" aria-current="page">
-        <!-- Nếu đang có filter thì tên khóa học biến thành link để click về trang gốc -->
-        <%= link_to_if (params[:q].present? || params[:sort_by].present?), @course.title, course_path(@course), class: "text-decoration-none text-dark" %>
+      <li class="breadcrumb-item" aria-current="page">
+        <span class="text-dark fw-semibold"><%= @course.title %></span>
       </li>
-      
-      <!-- Thêm mẩu breadcrumb nếu đang có filter -->
-      <% if params[:q].present? || params[:sort_by].present? %>
-        <li class="breadcrumb-item active text-primary" aria-current="page">
-          Đang lọc kết quả
-        </li>
-      <% end %>
     </ol>
   </nav>
 </div>
-
-<!-- KHU VỰC HIỂN THỊ CÁC BADGE BỘ LỌC ĐANG ACTIVE -->
-<% if params[:q].present? || params[:sort_by].present? %>
-  <div class="mb-4 d-flex flex-wrap gap-2 align-items-center">
-    <span class="text-muted small me-1"><i class="bi bi-funnel"></i> Đang áp dụng:</span>
-    
-    <!-- 1. Tag Từ khóa tìm kiếm -->
-    <% if params.dig(:q, :title_cont).present? %>
-      <span class="badge rounded-pill bg-light text-dark border">
-        Tên: "<%= params[:q][:title_cont] %>"
-      </span>
-    <% end %>
-
-    <!-- 2. Các Tag (Kỹ năng, Phần, Dạng) đang được chọn -->
-    <% if params.dig(:q, :by_tags).present? %>
-      <% active_tag_names = Tag.where(id: params[:q][:by_tags]).pluck(:name) %>
-      <% active_tag_names.each do |tag_name| %>
-        <span class="badge rounded-pill bg-info bg-opacity-10 text-info border border-info">
-          <%= tag_name %>
-        </span>
-      <% end %>
-    <% end %>
-
-    <!-- Nút Clear Filter (Về trang gốc) -->
-    <%= link_to "Xoá bộ lọc ✕", course_path(@course), class: "badge rounded-pill bg-danger text-white text-decoration-none ms-2" %>
-  </div>
-<% else %>
-  <div class="mb-4"></div> <!-- Giữ spacing nếu không có filter -->
-<% end %>
 
 
 <div class="row g-4 mb-5">
@@ -206,8 +169,3 @@
   </div>
 </div>
 
-<style>
-  .hover-bg-light:hover {
-    background-color: #f8f9fa;
-  }
-</style>

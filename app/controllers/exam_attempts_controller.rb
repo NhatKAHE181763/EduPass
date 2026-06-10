@@ -9,6 +9,7 @@ class ExamAttemptsController < ApplicationController
 
     @exam = @attempt.exam
     @sections = @exam.sections.includes(:questions).order(:order_index)
+    @notes = @attempt.notes.order(created_at: :desc)
   end
 
   def update

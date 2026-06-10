@@ -554,3 +554,7 @@ git push heroku main
 heroku run rails db:migrate
 heroku run rails db:seed
 ```
+
+khi code phải đảm bảo phải implement authorization đầy đủ bằng policy,
+đảm bảo mọi routes, model, controller, view phải đầy đủ.
+Tuyệt đối ko code hộ tôi mà phải đưa ra hướng dẫn chi tiết từng bước một.

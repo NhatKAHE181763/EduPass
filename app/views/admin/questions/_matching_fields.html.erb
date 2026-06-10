@@ -1,0 +1,25 @@
+<hr class="my-4">
+
+<div class="alert alert-info border-0 shadow-sm mb-4">
+  <h6 class="fw-bold">Hướng dẫn tạo câu hỏi Ghép đôi</h6>
+  <p class="mb-0">Bạn hãy nhập các cặp ghép đôi tương ứng (Vế trái - Vế phải). Hệ thống sẽ tự động xáo trộn ngẫu nhiên Vế phải khi sinh viên làm bài thi.</p>
+</div>
+
+<div data-controller="nested-form">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="fw-bold mb-0">Các cặp ghép đôi (Matching Pairs)</h4>
+    <button type="button" data-action="click->nested-form#add" class="btn btn-sm btn-success">+ Thêm cặp mới</button>
+  </div>
+
+  <div data-nested-form-target="target">
+    <%= f.fields_for :matching_pairs do |pair_form| %>
+      <%= render "matching_pair_fields", f: pair_form %>
+    <% end %>
+  </div>
+
+  <template data-nested-form-target="template">
+    <%= f.fields_for :matching_pairs, MatchingPair.new, child_index: 'NEW_RECORD' do |pair_form| %>
+      <%= render "matching_pair_fields", f: pair_form %>
+    <% end %>
+  </template>
+</div>

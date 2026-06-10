@@ -50,20 +50,28 @@
       + Thêm Câu hỏi
     </button>
     <ul class="dropdown-menu dropdown-menu-end">
-      <!-- Mới hỗ trợ làm Multiple Choice trước theo yêu cầu -->
       <li><%= link_to "Trắc nghiệm (Multiple Choice)", new_admin_exam_section_question_path(@exam, @section, type: 'multiple_choice'), class: "dropdown-item" %></li>
-      <li><%= link_to "Điền từ (Fill in Blank)", "#", class: "dropdown-item disabled text-muted" %></li>
-      <li><%= link_to "Ghép đôi (Matching)", "#", class: "dropdown-item disabled text-muted" %></li>
+      <li><%= link_to "Điền từ (Fill in Blank)", new_admin_exam_section_question_path(@exam, @section, type: 'fill_blank'), class: "dropdown-item" %></li>
+      <li><%= link_to "Ghép đôi (Matching)", new_admin_exam_section_question_path(@exam, @section, type: 'matching'), class: "dropdown-item" %></li>
     </ul>
   </div>
 </div>
 
 <div class="card shadow-sm border-0">
-  <div class="list-group list-group-flush">
+  <div class="list-group list-group-flush" 
+  data-controller="sortable" 
+  data-sortable-url-value="<%= reorder_admin_exam_section_questions_path(@exam, @section) %>">
+
     <% @section.questions.order(:order_index).each_with_index do |question, index| %>
-      <div class="list-group-item p-4">
+      <div class="list-group-item p-4" data-id="<%= question.id %>">
         <div class="d-flex justify-content-between mb-3">
-          <h5 class="fw-bold mb-0">Câu <%= index + 1 %></h5>
+          <div class="d-flex align-items-center gap-3">
+            <!-- Nút nắm kéo thả (drag-handle) -->
+            <div class="drag-handle text-muted" style="cursor: grab; font-size: 1.5rem; line-height: 1;">
+              &#8942;&#8942;
+            </div>
+            <h5 class="fw-bold mb-0">Câu <%= index + 1 %></h5>
+          </div>
           <div class="d-flex gap-2">
             <%= link_to "Sửa", edit_admin_exam_section_question_path(@exam, @section, question), class: "btn btn-sm btn-outline-primary" %>
             <%= button_to "Xóa", admin_exam_section_question_path(@exam, @section, question), method: :delete, class: "btn btn-sm btn-outline-danger", data: { turbo_confirm: "Xóa câu hỏi này?" } %>
@@ -75,7 +83,7 @@
           <%= question.content %>
         </div>
 
-        <!-- Trắc nghiệm: Hiển thị các đáp án -->
+        <!-- Hiển thị nội dung tùy theo loại câu hỏi -->
         <% if question.multiple_choice? %>
           <div class="ms-3 ps-3 border-start border-3 border-secondary">
             <% question.answers.each do |ans| %>
@@ -92,7 +100,35 @@
               </div>
             <% end %>
           </div>
+        
+        <% elsif question.fill_blank? %>
+          <div class="ms-3 ps-3 border-start border-3 border-info">
+            <h6 class="text-muted fw-bold" style="font-size: 0.85rem;">CÁC ĐÁP ÁN ĐÚNG CHẤP NHẬN ĐƯỢC:</h6>
+            <div class="d-flex flex-wrap gap-2">
+              <% question.answers.each do |ans| %>
+                <span class="badge bg-success p-2 text-white"><%= ans.content %></span>
+              <% end %>
+            </div>
+          </div>
+        
+        <% elsif question.matching? %>
+          <div class="ms-3 ps-3 border-start border-3 border-primary">
+            <h6 class="text-muted fw-bold" style="font-size: 0.85rem;">CÁC CẶP GHÉP ĐÔI:</h6>
+            <% question.matching_pairs.each do |pair| %>
+              <div class="d-flex align-items-center gap-3 mb-2">
+                <div class="p-2 border border-primary rounded bg-white w-50 fw-bold text-primary"><%= pair.left_content %></div>
+                <div class="text-muted" style="font-size: 1.2rem;">↔</div>
+                <div class="p-2 border border-success rounded bg-white w-50 fw-bold text-success"><%= pair.right_content %></div>
+              </div>
+              <% if pair.explanation.present? %>
+                <div class="text-muted fst-italic mb-3" style="font-size: 0.85rem;">
+                  ↳ Giải thích: <%= pair.explanation %>
+                </div>
+              <% end %>
+            <% end %>
+          </div>
         <% end %>
+
       </div>
     <% end %>
     

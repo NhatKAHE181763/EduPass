@@ -22,3 +22,25 @@ main {
 .footer {
     font-size: 0.9rem;
 }
+
+/* Ép 2 cái Tab hết bị tàng hình (opacity: 1) khi xem trên máy tính */
+@media (min-width: 768px) {
+    .tab-pane.fade {
+        opacity: 1 !important;
+    }
+}
+
+/* Trang trí thêm cho thanh kéo Divider */
+.drag-divider {
+    width: 10px;
+    background-color: #f1f3f5;
+    border-left: 1px solid #dee2e6;
+    border-right: 1px solid #dee2e6;
+    cursor: col-resize;
+    transition: all 0.2s ease;
+}
+
+.drag-divider:hover {
+    background-color: #e9ecef;
+    border-color: #0d6efd;
+}

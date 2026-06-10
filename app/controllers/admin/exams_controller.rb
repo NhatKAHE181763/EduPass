@@ -3,8 +3,28 @@ class Admin::ExamsController < ApplicationController
   before_action :set_exam, only: %i[ show edit update destroy toggle_status ]
 
   def index
-    # Dùng includes(:course) để tránh lỗi N+1 queries khi hiển thị danh sách
-    @exams = Exam.includes(:course).order(created_at: :desc)
+    @skills = Tag.skill
+    @parts = Tag.part
+    @question_types = Tag.question_type
+    @q = Exam.ransack(params[:q])
+
+
+    @exams = @q.result.includes(:course, :tags)
+
+    case params[:sort_by]
+    when "most_attempts"
+      @exams = @exams.left_joins(:exam_attempts)
+      .group("exams.id", "courses.id")
+      .order("COUNT(exam_attempts.id) DESC")
+    when "avg_score"
+      @exams = @exams.left_joins(:exam_attempts)
+      .group("exams.id", "courses.id")
+      .order("AVG(exam_attempts.score) DESC NULLS LAST")
+    else
+      @exams = @exams.order(created_at: :desc)
+    end
+
+    @exams = @exams.page(params[:page]).per(10)
     authorize [ :admin, Exam ]
   end
 
@@ -57,6 +77,11 @@ class Admin::ExamsController < ApplicationController
 
     # Reload lại trang trước đó (hoặc về trang danh sách nếu lỗi)
     redirect_back fallback_location: admin_exams_path, notice: notice
+  end
+
+  def preview
+    @exam = Exam.includes(sections: { questions: [ :answers, :matching_pairs ] }).find_by!(slug: params[:id])
+    authorize [ :admin, @exam ], :show?
   end
 
   private

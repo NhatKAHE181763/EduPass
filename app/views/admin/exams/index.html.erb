@@ -3,6 +3,68 @@
   <%= link_to "Tạo Bài thi mới", new_admin_exam_path, class: "btn btn-primary" %>
 </div>
 
+<!-- FORM SEARCH & FILTER BẰNG RANSACK -->
+<div class="card shadow-sm border-0 mb-4">
+  <div class="card-body">
+    <%= search_form_for @q, url: admin_exams_path, method: :get do |f| %>
+      <div class="row g-3">
+        
+        <div class="col-md-3">
+          <%= f.label :title_cont, "Tên bài thi", class: "form-label fw-bold" %>
+          <%= f.search_field :title_cont, class: "form-control", placeholder: "Nhập từ khoá..." %>
+        </div>
+
+        <div class="col-md-2">
+          <%= f.label :course_course_type_eq, "Chứng chỉ", class: "form-label fw-bold" %>
+          <%= f.select :course_course_type_eq, Course.course_types.keys.map { |k| [k.upcase, Course.course_types[k]] }, { include_blank: "Tất cả" }, class: "form-select" %>
+        </div>
+
+        <div class="col-md-2">
+          <%= f.label :course_level_eq, "Level", class: "form-label fw-bold" %>
+          <%= f.select :course_level_eq, Course.levels.keys.map { |k| [k.titleize, Course.levels[k]] }, { include_blank: "Tất cả" }, class: "form-select" %>
+        </div>
+
+        <div class="col-md-2">
+          <%= f.label :course_is_premium_eq, "Premium?", class: "form-label fw-bold" %>
+          <%= f.select :course_is_premium_eq, [["Có", true], ["Không", false]], { include_blank: "Tất cả" }, class: "form-select" %>
+        </div>
+
+        <div class="col-md-3">
+          <%= label_tag :sort_by, "Sắp xếp theo", class: "form-label fw-bold" %>
+          <%= select_tag :sort_by, options_for_select([
+            ["Mới nhất", "newest"], 
+            ["Lượt thi nhiều nhất", "most_attempts"], 
+            ["Điểm trung bình cao nhất", "avg_score"]
+          ], params[:sort_by]), class: "form-select", onchange: "this.form.submit()" %>
+        </div>
+
+        <div class="col-12"><hr class="my-2"></div>
+
+        <div class="col-md-4">
+          <%= f.label :by_tags, "Kỹ năng (Skill)", class: "form-label" %>
+          <%= select_tag "q[by_tags][]", options_from_collection_for_select(@skills, :id, :name, params.dig(:q, :by_tags)), multiple: true, class: "form-select", size: 3 %>
+        </div>
+
+        <div class="col-md-4">
+          <%= f.label :by_tags, "Phần thi (Part)", class: "form-label" %>
+          <%= select_tag "q[by_tags][]", options_from_collection_for_select(@parts, :id, :name, params.dig(:q, :by_tags)), multiple: true, class: "form-select", size: 3 %>
+        </div>
+
+        <div class="col-md-4">
+          <%= f.label :by_tags, "Dạng câu (Type)", class: "form-label" %>
+          <%= select_tag "q[by_tags][]", options_from_collection_for_select(@question_types, :id, :name, params.dig(:q, :by_tags)), multiple: true, class: "form-select", size: 3 %>
+        </div>
+
+        <div class="col-12 mt-3 text-end">
+          <%= link_to "Xoá bộ lọc", admin_exams_path, class: "btn btn-light me-2" %>
+          <%= f.submit "Tìm kiếm & Lọc", class: "btn btn-primary" %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+
 <div class="card shadow-sm border-0">
   <div class="card-body p-0">
     <div class="table-responsive">
@@ -43,7 +105,7 @@
                     <% end %>
                     
                     <%= link_to "Sửa", edit_admin_exam_path(exam), class: "btn btn-sm btn-outline-primary" %>
-                    <%= link_to "Preview", admin_exam_path(exam), class: "btn btn-sm btn-outline-info" %>
+                    <%= link_to "Preview", preview_admin_exam_path(exam), class: "btn btn-sm btn-outline-info" %>
                   </div>
                 </td>
               </tr>
@@ -55,6 +117,9 @@
           <% end %>
         </tbody>
       </table>
+      <div class="d-flex justify-content-center mt-4">
+        <%= paginate @exams %>
+      </div>
     </div>
   </div>
 </div>

@@ -26,7 +26,7 @@ export default class extends Controller {
         if (event.oldIndex === event.newIndex) return
 
         // Lấy mảng ID theo thứ tự mới từ thuộc tính data-id của mỗi thẻ con
-        const sectionIds = Array.from(this.element.children).map(child => child.dataset.id)
+        const itemIds = Array.from(this.element.children).map(child => child.dataset.id)
 
         // Gửi PATCH request để lưu thứ tự
         fetch(this.urlValue, {
@@ -35,7 +35,7 @@ export default class extends Controller {
                 "Content-Type": "application/json",
                 "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]').content
             },
-            body: JSON.stringify({ section_ids: sectionIds })
+            body: JSON.stringify({ item_ids: itemIds })
         }).then(response => {
             if (!response.ok) {
                 alert("Có lỗi xảy ra khi lưu vị trí!")

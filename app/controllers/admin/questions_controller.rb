@@ -4,8 +4,9 @@ class Admin::QuestionsController < ApplicationController
   before_action :set_question, only: %i[edit update destroy]
 
   def new
-    @question = @section.questions.build(question_type: :multiple_choice)
-    4.times { @question.answers.build }
+    q_type = params[:type] || :multiple_choice
+
+    @question = QuestionBuilder.build(@section, q_type)
   end
 
   def create
@@ -36,6 +37,17 @@ class Admin::QuestionsController < ApplicationController
     redirect_to admin_exam_section_path(@exam, @section), notice: "Question deleted successfully"
   end
 
+  def reorder
+    if params[:item_ids].present?
+      items = params[:item_ids].map.with_index do |id, index|
+        { id: id.to_i, order_index: index + 1 }
+      end
+      @section.questions.upsert_all(items, update_only: [ :order_index ])
+    end
+
+    head :ok
+  end
+
   private
 
   def set_exam_and_section
@@ -51,6 +63,7 @@ class Admin::QuestionsController < ApplicationController
 
   def question_params
     params.require(:question).permit(:question_type, :content, :explanation, :allow_multiple,
-    answers_attributes: [ :id, :content, :is_correct, :explanation, :_destroy ])
+    answers_attributes: [ :id, :content, :is_correct, :explanation, :_destroy ],
+    matching_pairs_attributes: [ :id, :left_content, :right_content, :explanation, :order_index, :_destroy ])
   end
 end

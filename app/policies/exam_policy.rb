@@ -20,6 +20,11 @@ class ExamPolicy < ApplicationPolicy
     user&.admin? || (user&.teacher? && record.created_by_id == user&.id)
   end
 
+  def start?
+    return true if user&.admin? || user&.teacher?
+    record.published?
+  end
+
   class Scope < ApplicationPolicy::Scope
     # NOTE: Be explicit about which records you allow access to!
     def resolve

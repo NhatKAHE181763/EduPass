@@ -9,7 +9,16 @@
 <div class="d-flex justify-content-between align-items-center mb-3">
   <h3 class="fw-bold mb-0">Danh sách Sections</h3>
   <!-- data-turbo-frame="new_section" báo cho Rails biết sẽ load form tạo mới vào khung bên dưới -->
-  <%= link_to "Thêm Reading Section", new_admin_exam_section_path(@exam), class: "btn btn-success", data: { turbo_frame: "new_section" } %>
+  <div class="dropdown">
+    <button class="btn btn-success dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+      + Thêm Section
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end">
+      <li><%= link_to "Reading Section", new_admin_exam_section_path(@exam, section_type: 'reading'), class: "dropdown-item", data: { turbo_frame: "new_section" } %></li>
+      <li><%= link_to "Listening Section", new_admin_exam_section_path(@exam, section_type: 'listening'), class: "dropdown-item", data: { turbo_frame: "new_section" } %></li>
+    </ul>
+  </div>
+
 </div>
 
 <div class="card shadow-sm border-0 mb-4">

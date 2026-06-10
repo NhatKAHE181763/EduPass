@@ -13,6 +13,20 @@ class Exam < ApplicationRecord
   validates :course_id, presence: true
   validates :duration_minutes, presence: true, numericality: { greater_than: 0 }
 
+  before_validation :generate_slug, on: :create
+  scope :published, -> { where(status: :published) }
+
+  scope :by_tags, ->(*tag_ids) {
+    tag_ids = Array(tag_ids).compact_blank
+    return all if tag_ids.empty?
+    where(id: joins(:taggings)
+    .where(taggings: { tag_id: tag_ids })
+    .select(:id))
+  }
+
+  def to_param
+    slug
+  end
 
   def self.ransackable_attributes(auth_object = nil)
     [ "course_id", "created_at", "created_by_id", "duration_minutes", "id", "slug", "status", "title", "updated_at" ]
@@ -22,11 +36,8 @@ class Exam < ApplicationRecord
     [ "course", "created_by", "exam_attempts" ]
   end
 
-  before_validation :generate_slug, on: :create
-  scope :published, -> { where(status: :published) }
-
-  def to_param
-    slug
+  def self.ransackable_scopes(_auth_object = nil)
+    [ :by_tags ]
   end
 
   private

@@ -6,7 +6,7 @@
     <div>
       <h6 class="mb-0 fw-bold">
         <%= link_to section.title, admin_exam_section_path(@exam, section),
-         class: "text-decoration-none text-dark", data: { turbo_frame: "_top" } %>
+         class: "text-decoration-none text-primary", data: { turbo_frame: "_top" } %>
       </h6>
       <small class="text-muted"><%= section.section_type.titleize %> • Hướng dẫn: <%= section.instruction.presence || "Không có" %></small>
     </div>

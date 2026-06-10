@@ -1,0 +1,13 @@
+<div class="nested-fields card shadow-sm mb-3 border-0 bg-light">
+  <div class="card-body d-flex gap-3 align-items-center">
+    <!-- Mặc định luôn là đáp án đúng, ẩn checkbox đi -->
+    <%= f.hidden_field :is_correct, value: true %>
+    <%= f.hidden_field :_destroy %>
+    
+    <div class="flex-grow-1">
+      <%= f.text_field :content, class: "form-control fw-bold text-success", placeholder: "Ví dụ: colour", required: true %>
+    </div>
+
+    <button type="button" data-action="click->nested-form#remove" class="btn btn-outline-danger">Xóa</button>
+  </div>
+</div>

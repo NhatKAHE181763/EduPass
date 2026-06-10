@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  question: one
+  left_content: MyString
+  right_content: MyString
+  explanation: MyText
+  order_index: 1
+
+two:
+  question: two
+  left_content: MyString
+  right_content: MyString
+  explanation: MyText
+  order_index: 1

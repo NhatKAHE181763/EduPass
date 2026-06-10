@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_04_071233) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_08_022731) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -120,6 +120,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_04_071233) do
     t.index ["slug"], name: "index_exams_on_slug", unique: true
   end
 
+  create_table "matching_pairs", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.text "explanation"
+    t.string "left_content"
+    t.integer "order_index"
+    t.bigint "question_id", null: false
+    t.string "right_content"
+    t.datetime "updated_at", null: false
+    t.index ["question_id"], name: "index_matching_pairs_on_question_id"
+  end
+
   create_table "questions", force: :cascade do |t|
     t.boolean "allow_multiple", default: false
     t.text "content"
@@ -174,6 +185,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_04_071233) do
     t.index ["slug"], name: "index_tags_on_slug", unique: true
   end
 
+  create_table "user_answers", force: :cascade do |t|
+    t.bigint "answer_id", null: false
+    t.datetime "created_at", null: false
+    t.bigint "exam_attempt_id", null: false
+    t.boolean "is_correct"
+    t.jsonb "matched_pairs"
+    t.bigint "question_id", null: false
+    t.string "text_answer"
+    t.datetime "updated_at", null: false
+    t.index ["answer_id"], name: "index_user_answers_on_answer_id"
+    t.index ["exam_attempt_id"], name: "index_user_answers_on_exam_attempt_id"
+    t.index ["question_id"], name: "index_user_answers_on_question_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.datetime "confirmation_sent_at"
     t.string "confirmation_token"
@@ -207,8 +232,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_04_071233) do
   add_foreign_key "exam_plans", "users"
   add_foreign_key "exams", "courses"
   add_foreign_key "exams", "users", column: "created_by_id"
+  add_foreign_key "matching_pairs", "questions"
   add_foreign_key "questions", "sections"
   add_foreign_key "sections", "exams"
   add_foreign_key "study_activities", "users"
   add_foreign_key "taggings", "tags"
+  add_foreign_key "user_answers", "answers"
+  add_foreign_key "user_answers", "exam_attempts"
+  add_foreign_key "user_answers", "questions"
 end

@@ -23,7 +23,13 @@ Rails.application.routes.draw do
 
   resources :exam_plans, except: [ :show ]
   resources :courses, only: [ :index, :show ]
-  resources :exams, only: [ :index, :show ]
+  resources :exams, only: [ :index, :show ] do
+    member do
+      post :start
+      post :submit
+    end
+  end
+  resources :exam_attempts, only: [ :show, :update ]
 
   namespace :student do
     resource :dashboard, only: [ :show ], controller: "dashboard"
@@ -35,13 +41,18 @@ Rails.application.routes.draw do
     resources :exams do
       member do
         patch :toggle_status
+        get :preview
       end
 
       resources :sections, except: [ :index ] do
         collection do
           patch :reorder
         end
-        resources :questions, except: [ :index, :show ]
+        resources :questions, except: [ :index, :show ] do
+          collection do
+            patch :reorder
+          end
+        end
       end
     end
   end

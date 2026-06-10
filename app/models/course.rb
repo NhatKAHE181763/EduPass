@@ -1,5 +1,5 @@
 class Course < ApplicationRecord
-  enum :course_type, { ielts: 0, toeic: 1 }
+  enum :course_type, { ielts: 0, toeic: 1, toefl: 2, sat: 3, tesol: 4, pte: 5, aptis: 6, cefr: 7, vstep: 8, cambridge: 9 }
   enum :level, { beginner: 0, intermediate: 1, advanced: 2 }
 
   belongs_to :created_by, class_name: "User"

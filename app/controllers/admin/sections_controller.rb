@@ -4,7 +4,8 @@ class Admin::SectionsController < ApplicationController
   before_action :set_section, only: %i[show edit update destroy]
 
   def new
-    @section = @exam.sections.build(section_type: :reading)
+    type = params[:section_type] || :reading
+    @section = @exam.sections.build(section_type: type)
   end
 
   def show
@@ -39,11 +40,12 @@ class Admin::SectionsController < ApplicationController
   end
 
   def reorder
-    if params[:section_ids].present?
-      params[:section_ids].each_with_index do |id, index|
-        # @exam.sections.where(id: id).update_all(order_index: index + 1)
-        @exam.sections.find(id).update!(order_index: index + 1)
+    if params[:item_ids].present?
+
+      items = params[:item_ids].map.with_index do |id, index|
+        { id: id.to_i, order_index: index + 1 }
       end
+      @exam.sections.upsert_all(items, update_only: [ :order_index ])
     end
 
     head :ok

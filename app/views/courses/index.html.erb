@@ -59,7 +59,9 @@
             </p>
             
             <div class="mt-auto d-flex justify-content-between align-items-center pt-3 border-top">
-              <span class="text-muted small"><%= course.level.titleize %></span>
+              <span class="badge rounded-pill bg-secondary bg-opacity-10 text-secondary border border-secondary-subtle">
+                <%= course.level.titleize %>
+              </span>
               <span class="text-muted small fw-bold text-primary"><%= course.exams.published.count %> Đề thi</span>
             </div>
           </div>

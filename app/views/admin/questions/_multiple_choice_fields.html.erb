@@ -1,0 +1,25 @@
+<div class="form-check mb-4">
+  <%= f.check_box :allow_multiple, class: "form-check-input" %>
+  <%= f.label :allow_multiple, "Cho phép chọn nhiều đáp án đúng (Multiple correct answers)", class: "form-check-label text-primary fw-bold" %>
+</div>
+
+<hr class="my-4">
+
+<div data-controller="nested-form">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="fw-bold mb-0">Các đáp án (Answers)</h4>
+    <button type="button" data-action="click->nested-form#add" class="btn btn-sm btn-success">+ Thêm đáp án</button>
+  </div>
+
+  <div data-nested-form-target="target">
+    <%= f.fields_for :answers do |answer_form| %>
+      <%= render "answer_fields", f: answer_form %>
+    <% end %>
+  </div>
+
+  <template data-nested-form-target="template">
+    <%= f.fields_for :answers, Answer.new, child_index: 'NEW_RECORD' do |answer_form| %>
+      <%= render "answer_fields", f: answer_form %>
+    <% end %>
+  </template>
+</div>

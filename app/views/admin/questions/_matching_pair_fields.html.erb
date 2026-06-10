@@ -1,0 +1,24 @@
+<div class="nested-fields card shadow-sm mb-3 border-0 bg-light">
+  <div class="card-body">
+    <div class="d-flex justify-content-end mb-2">
+      <%= f.hidden_field :_destroy %>
+      <button type="button" data-action="click->nested-form#remove" class="btn btn-sm btn-outline-danger">Xóa cặp này</button>
+    </div>
+    
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <%= f.label :left_content, "Vế TRÁI (Ví dụ: Từ vựng) *", class: "form-label fw-bold" %>
+        <%= f.text_field :left_content, class: "form-control border-primary", required: true %>
+      </div>
+      <div class="col-md-6">
+        <%= f.label :right_content, "Vế PHẢI (Ví dụ: Định nghĩa) *", class: "form-label fw-bold" %>
+        <%= f.text_field :right_content, class: "form-control border-success", required: true %>
+      </div>
+    </div>
+
+    <div>
+      <%= f.label :explanation, "Giải thích cặp này", class: "form-label text-muted" %>
+      <%= f.text_area :explanation, class: "form-control", rows: 1 %>
+    </div>
+  </div>
+</div>

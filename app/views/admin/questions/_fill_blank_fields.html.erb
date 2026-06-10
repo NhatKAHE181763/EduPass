@@ -1,0 +1,28 @@
+<hr class="my-4">
+
+<div class="alert alert-info border-0 shadow-sm mb-4">
+  <h6 class="fw-bold">Hướng dẫn tạo câu hỏi Điền từ</h6>
+  <ul class="mb-0">
+    <li>Hãy gõ trực tiếp chữ <code>[BLANK]</code> vào <strong>Nội dung câu hỏi</strong> ở trên để đánh dấu vị trí cần điền từ.</li>
+    <li>Ở dưới đây, bạn hãy thêm các <strong>đáp án tương đương</strong> (VD: <em>colour</em>, <em>color</em>). Học viên gõ khớp BẤT KỲ đáp án nào trong danh sách đều được tính điểm tối đa.</li>
+  </ul>
+</div>
+
+<div data-controller="nested-form">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="fw-bold mb-0">Các đáp án chấp nhận được</h4>
+    <button type="button" data-action="click->nested-form#add" class="btn btn-sm btn-success">+ Thêm đáp án tương đương</button>
+  </div>
+
+  <div data-nested-form-target="target">
+    <%= f.fields_for :answers do |answer_form| %>
+      <%= render "fill_blank_answer_fields", f: answer_form %>
+    <% end %>
+  </div>
+
+  <template data-nested-form-target="template">
+    <%= f.fields_for :answers, Answer.new, child_index: 'NEW_RECORD' do |answer_form| %>
+      <%= render "fill_blank_answer_fields", f: answer_form %>
+    <% end %>
+  </template>
+</div>

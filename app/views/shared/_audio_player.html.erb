@@ -1,0 +1,46 @@
+<div class="audio-player-wrapper p-3 bg-white rounded shadow-sm border mb-4" data-controller="audio-player" data-audio-player-url-value="<%= audio_url %>">
+    <audio src="<%= audio_url %>" data-audio-player-target="audio" preload="metadata"> </audio>
+    <div class="d-flex align-items-center gap-3">
+        <button type="button" class="btn btn-sm btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center" 
+            style="width: 35px; height: 35px;" data-action="click->audio-player#skipBackward" title="Tua lùi 10 giây">
+            <i class="bi bi-rewind-fill"></i>
+        </button>
+
+        <button type="button" class="btn btn-primary rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 shadow-sm" style="width: 50px; height: 50px;"
+        data-action="click->audio-player#togglePlay" title="Play / Pause">
+            <i class="bi bi-play-fill fs-3" data-audio-player-target="playIcon"></i>
+            <i class="bi bi-pause-fill fs-3 d-none" data-audio-player-target="pauseIcon"></i>
+        </button>
+
+        <button type="button" class="btn btn-sm btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center" 
+            style="width: 35px; height: 35px;" data-action="click->audio-player#skipForward" title="Tua tới 10 giây">
+            <i class="bi bi-fast-forward-fill"></i>
+        </button>
+
+        <div class="flex-grow-1 d-flex flex-column justify-content-center">
+            <div class="d-flex justify-content-between mb-1" style="font-size: 0.85rem; font-weight: 500;">
+                <span class="text-primary" data-audio-player-target="currentTime">00:00</span>
+                <span class="text-primary" data-audio-player-target="duration">00:00</span>
+            </div>
+            <input type="range" class="custom-progress-bar" value="0" min="0" max="100" step="0.1" data-audio-player-target="progressBar" data-action="input->audio-player#seek">
+        </div>
+
+        <div class="d-none d-md-flex align-items-center gap-2 flex-shrink-0" style="width: 120px;">
+            <button type="button" class="btn btn-sm btn-link p-0 text-secondary" data-action="click->audio-player#toggleMute" title="Tắt / Bật tiếng">
+                <i class="bi bi-volume-up-fill fs-5" data-audio-player-target="volumeIcon"></i>
+            </button>
+            
+            <input type="range" class="form-range" value="1" min="0" max="1" step="0.05" 
+            data-audio-player-target="volumeSlider"
+            data-action="input->audio-player#changeVolume">
+        </div>
+        <select class="form-select form-select-sm ms-2 flex-shrink-0" style="width: 80px;" data-action="change->audio-player#setPlaybackRate" title="Tốc độ phát">
+            <option value="0.8">0.8x</option>
+            <option value="1" selected>1x</option>
+            <option value="1.1">1.1x</option>
+            <option value="1.2">1.2x</option>
+            <option value="1.4">1.4x</option>
+        </select>
+
+    </div>
+</div>

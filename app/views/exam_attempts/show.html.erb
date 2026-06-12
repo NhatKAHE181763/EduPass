@@ -71,10 +71,20 @@
           <!-- Ẩn các section không phải là section đang làm -->
           <div class="section-passage <%= 'd-none' unless idx == 0 %>" data-exam-form-target="passage" data-section-index="<%= idx %>" data-section-id="<%= section.id %>">
             <h4 class="fw-bold mb-4 text-primary"><%= section.title %></h4>
-            <div class="text-dark" style="line-height: 1.8; font-size: 1.1rem;">
-              <%= section.passage %>
-            </div>
+            
+            <!-- Hiển thị Audio Player nếu Section có đính kèm file âm thanh -->
+            <% if section.audio_file.attached? %>
+              <%= render "shared/audio_player", audio_url: url_for(section.audio_file) %>
+            <% end %>
+
+            <!-- Nội dung đoạn văn bên dưới (nếu có) -->
+            <% if section.passage.present? %>
+              <div class="text-dark mt-3" style="line-height: 1.8; font-size: 1.1rem;">
+                <%= section.passage %>
+              </div>
+            <% end %>
           </div>
+
         <% end %>
       </div>
     </div>

@@ -48,3 +48,29 @@ main {
 .hover-bg-light:hover {
     background-color: #f8f9fa;
 }
+
+input[type=range].custom-progress-bar {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 6px;
+    /* Chiều cao của thanh băng */
+    border-radius: 4px;
+    outline: none;
+    background: #e9ecef;
+    /* Màu xám mặc định khi chưa load */
+    cursor: pointer;
+}
+
+/* Cục tròn tròn để kéo (Thumb) */
+input[type=range].custom-progress-bar::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #0d6efd;
+    /* Màu xanh đồng bộ */
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}

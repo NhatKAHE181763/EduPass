@@ -23,6 +23,13 @@ Rails.application.routes.draw do
 
   resources :exam_plans, except: [ :show ]
   resources :courses, only: [ :index, :show ]
+  resources :comments, only: [ :create, :destroy ] do
+    member do
+      patch :pin
+      post :like
+      post :dislike
+    end
+  end
   resources :exams, only: [ :index, :show ] do
     member do
       post :start

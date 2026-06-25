@@ -45,15 +45,7 @@ class Admin::CoursesController < ApplicationController
   private
 
   def course_params
-    params.require(:course).permit(
-      :title,
-      :description,
-      :slug,
-      :course_type,
-      :level,
-      :is_premium,
-      :thumbnail
-    )
+    params.require(:course).permit(:title, :description, :slug, :course_type, :level, :is_premium, :thumbnail)
   end
 
   def set_course

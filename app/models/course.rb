@@ -4,6 +4,7 @@ class Course < ApplicationRecord
 
   belongs_to :created_by, class_name: "User"
   has_many :exams, dependent: :destroy
+  has_many :comments, as: :commentable, dependent: :destroy
   has_one_attached :thumbnail
 
   validates :title, presence: true

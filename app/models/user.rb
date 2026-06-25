@@ -16,6 +16,7 @@ class User < ApplicationRecord
   has_many :exam_plans, dependent: :destroy
   has_many :study_activities, dependent: :destroy
   has_many :exam_attempts, dependent: :destroy
+  has_many :comments, dependent: :destroy
   has_many :created_courses, class_name: "Course", foreign_key: "created_by_id", dependent: :nullify
 
   # Hàm xử lý logic khi nhận data từ Google trả về

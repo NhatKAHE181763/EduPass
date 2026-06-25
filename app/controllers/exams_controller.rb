@@ -5,6 +5,10 @@ class ExamsController < ApplicationController
     authorize @exam
     @is_locked = @exam.course.is_premium? &&
       (!user_signed_in? || !current_user.has_active_subscription?)
+
+    if user_signed_in?
+      @attempts = current_user.exam_attempts.where(exam: @exam).order(created_at: :desc)
+    end
   end
 
   def start
@@ -17,7 +21,6 @@ class ExamsController < ApplicationController
       @attempt = nil
     end
 
-    # Nếu user chưa có lượt làm nào dang dở, tạo mới
     unless @attempt
       @attempt = current_user.exam_attempts.create!(
         exam: @exam,
@@ -26,7 +29,6 @@ class ExamsController < ApplicationController
         total_questions: Question.where(section_id: @exam.sections.select(:id)).count
       )
     end
-    # Redirect sang trang Split-screen làm bài
     redirect_to exam_attempt_path(@attempt)
   end
 end

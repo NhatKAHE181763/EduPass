@@ -1,17 +1,57 @@
+<%
+  is_submitted = @attempt.submitted?
+  user_answer = is_submitted ? @user_answers_hash[question.id] : nil
+  selected_ids = []
+  if is_submitted && user_answer
+    if question.allow_multiple
+      selected_ids = JSON.parse(user_answer.text_answer || "[]").map(&:to_i)
+    else
+      selected_ids = [user_answer.answer_id].compact
+    end
+  end
+%>
+
 <div class="multiple-choice-options">
   <% input_type = question.allow_multiple? ? 'checkbox' : 'radio' %>
   <% input_name = question.allow_multiple? ? "answers[#{question.id}][]" : "answers[#{question.id}]" %>
     <% question.answers.each do |ans| %>
-    <div class="form-check mb-3">
+
+    <%
+      is_selected = selected_ids.include?(ans.id)
+      bg_class = ""
+      text_class = "text-dark"
+      icon_class = ""
+
+      if is_submitted
+        if ans.is_correct
+          bg_class = "bg-success bg-opacity-10 border border-success rounded"
+          text_class = "text-success fw-bold"
+          icon_class = "bi-check-lg text-success"
+        elsif is_selected && !ans.is_correct
+          bg_class = "bg-danger bg-opacity-10 border border-danger rounded"
+          text_class = "text-danger fw-bold"
+          icon_class = "bi-x-lg text-danger"
+        end
+      end
+    %>
+    <div class="form-check mb-2 p-2 <%= bg_class %>" style="padding-left: 2.5rem !important;">
       <input class="form-check-input border-secondary" type="<%= input_type %>" 
              name="<%= input_name %>" 
              id="q_<%= question.id %>_ans_<%= ans.id %>" 
              value="<%= ans.id %>"
-             style="transform: scale(1.2); margin-top: 0.3rem;"
+             <%= "checked" if is_selected %>
+             <%= "disabled" if is_submitted %>
              data-action="change->exam-form#markAnswered">
-      <label class="form-check-label w-100 ps-2 text-dark" for="q_<%= question.id %>_ans_<%= ans.id %>" style="cursor: pointer; font-size: 1.1rem;">
+      <label class="form-check-label w-100 ps-2 text-dark" 
+      for="q_<%= question.id %>_ans_<%= ans.id %>" 
+      style="cursor: <%= is_submitted ? 'default' : 'pointer' %>; font-size: 1.1rem;">
         <%= ans.content %>
+        <i class="bi <%= icon_class %> float-end fs-4"></i>
       </label>
     </div>
   <% end %>
 </div>
+
+<% if is_submitted %>
+  <%= render "exam_attempts/questions/explanation", question: question, user_answer: user_answer %>
+<% end %>

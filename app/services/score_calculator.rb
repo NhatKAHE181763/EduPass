@@ -33,7 +33,7 @@ module ScoreCalculator
       405, 410, 415, 420, 425, 430, 435, 440, 445, 450,
       455, 460, 465, 470, 475, 480, 485, 490, 495, 495
     ]
-    scores[correct_count] || 495
+    scores[correct_count] || 0
   end
 
   def self.calculate_toeic_listening(correct_count)
@@ -49,6 +49,6 @@ module ScoreCalculator
       405, 410, 415, 420, 425, 430, 435, 440, 445, 450,
       455, 460, 465, 470, 475, 480, 485, 490, 495, 495
     ]
-    scores[correct_count] || 495
+    scores[correct_count] || 0
   end
 end

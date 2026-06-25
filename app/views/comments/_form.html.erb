@@ -1,0 +1,8 @@
+<%= form_with model: Comment.new, url: comments_path, class: "mb-3" do |f| %>
+    <%= f.hidden_field :commentable_type, value: commentable.class.name %>
+    <%= f.hidden_field :commentable_id, value: commentable.id %>
+    <%= f.hidden_field :parent_id, value: local_assigns[:parent_id] %>
+
+    <%= f.text_field :body, required: true, class: "form-control", placeholder: "Viết bình luận..." %>
+    <%= f.submit "Gửi", class: "btn btn-primary px-4 mt-1 fw-bold" %>
+<% end %>

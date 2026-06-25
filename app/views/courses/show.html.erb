@@ -11,7 +11,7 @@
 
 
 <div class="row g-4 mb-5">
-  <!-- Cột trái: Thông tin khóa học (Sticky) -->
+  <!-- Thông tin khóa học -->
   <div class="col-lg-4">
     <div class="card shadow-sm border-0 sticky-lg-top" style="top: 20px; z-index: 1;">
       <% if @course.thumbnail.attached? %>
@@ -26,8 +26,6 @@
         <h3 class="card-title fw-bold mb-3"><%= @course.title %></h3>
         
         <div class="d-flex gap-2 mb-3">
-          <span class="badge bg-primary bg-opacity-10 text-primary"><%= @course.course_type.upcase %></span>
-          <span class="badge bg-info bg-opacity-10 text-dark border"><%= @course.level.titleize %></span>
           <% if @course.is_premium? %>
             <span class="badge bg-warning text-dark">Premium</span>
           <% end %>
@@ -39,10 +37,6 @@
         <p class="text-muted"><%= simple_format(@course.description) %></p>
         
         <div class="bg-light p-3 rounded mt-4">
-          <div class="d-flex justify-content-between mb-2">
-            <span class="text-muted">Giảng viên:</span>
-            <strong><%= @course.created_by&.full_name || "Admin" %></strong>
-          </div>
           <div class="d-flex justify-content-between">
             <span class="text-muted">Tổng số đề thi:</span>
             <strong><%= @exams.count %></strong>
@@ -52,10 +46,10 @@
     </div>
   </div>
 
-  <!-- Cột phải: Danh sách đề thi -->
+  <!-- Danh sách đề thi -->
   <div class="col-lg-8">
     <div class="card shadow-sm border-0">
-            <div class="card-header bg-white border-bottom p-4">
+      <div class="card-header bg-white border-bottom p-4">
         <div class="d-flex justify-content-between align-items-center mb-3">
           <h4 class="mb-0 fw-bold">Danh sách Bài thi (<%= @exams.total_count rescue @exams.count %>)</h4>
           <% if params[:q].present? || params[:sort_by].present? %>
@@ -63,14 +57,12 @@
           <% end %>
         </div>
 
-        <!-- FORM LỌC INLINE CHO HỌC VIÊN -->
         <%= search_form_for @q, url: course_path(@course), method: :get, class: "row g-2" do |f| %>
           
           <div class="col-md-3">
             <%= f.search_field :title_cont, class: "form-control form-control-sm", placeholder: "Tìm tên bài thi..." %>
           </div>
           
-          <!-- Các Dropdown Tag (đều dùng name="q[by_tags][]" để gộp vào mảng truyền cho scope) -->
           <div class="col-md-2">
             <%= select_tag "q[by_tags][]", options_from_collection_for_select(@skills, :id, :name, params.dig(:q, :by_tags)), include_blank: "Tất cả Kỹ năng", class: "form-select form-select-sm" %>
           </div>
@@ -92,7 +84,6 @@
             ], params[:per_page] || 1), class: "form-select form-select-sm", onchange: "this.form.submit()" %>
           </div>
 
-          <!-- Submit -->
           <div class="col-md-1 text-end">
             <%= f.submit "Lọc", class: "btn btn-sm btn-primary w-100" %>
           </div>
@@ -114,7 +105,7 @@
                     <%= exam.title %>
                   </h5>
                   
-                  <!-- Khu vực hiển thị Tags với màu sắc khác nhau -->
+                  <!-- Tags -->
                   <div class="mb-2">
                     <% exam.tags.each do |tag| %>
                       <% badge_class = case tag.category.to_sym
@@ -127,7 +118,7 @@
                     <% end %>
                   </div>
 
-                  <!-- Khu vực thống kê -->
+                  <!-- thống kê -->
                   <div class="text-muted small mt-2 d-flex align-items-center flex-wrap gap-3">
                     <span>
                       <i class="bi bi-clock"></i> <%= exam.duration_minutes %> phút
@@ -145,7 +136,8 @@
                   <% if is_locked %>
                     <%= link_to "Nâng cấp", "#", class: "btn btn-warning text-dark px-4 rounded-pill fw-bold" %>
                   <% else %>
-                    <%= button_to "Vào thi", start_exam_path(exam), method: :post, class: "btn btn-outline-primary px-4 rounded-pill fw-bold" %>
+                    <%= button_to "Làm bài", start_exam_path(exam), method: :post, class: "btn btn-outline-primary px-4 rounded-pill fw-bold" %>
+                    <%= link_to "Lịch sử", exam_path(exam), class: "btn btn-sm btn-outline-secondary fw-bold px-4 rounded-pill mt-1" %>
                   <% end %>
                 </div>
               </div>
@@ -153,8 +145,7 @@
             <% end %>
           <% else %>
             <div class="p-5 text-center text-muted">
-              <span style="font-size: 3rem;">📄</span>
-              <p class="mt-3">Khóa học này hiện chưa có bài thi nào được phát hành.</p>
+              <p class="mt-3">Khóa học này hiện chưa có bài thi.</p>
             </div>
           <% end %>
           <% if @exams.respond_to?(:total_pages) && @exams.total_pages > 1%>
@@ -169,3 +160,22 @@
   </div>
 </div>
 
+<hr>
+
+<h3>Bình luận</h3>
+
+  <% if user_signed_in? %>
+    <%= render "comments/form", commentable: @course %>
+  <% else %>
+      Vui lòng <%= link_to "đăng nhập", new_user_session_path, class: "fw-bold" %> để tham gia thảo luận.
+  <% end %>
+
+<div class="mt-4">
+  <% if @comments.any? %>
+    <% @comments.each do |comment| %>
+      <%= render "comments/comment", comment: comment %>
+    <% end %>
+  <% else %>
+    <p class="text-muted text-center">Chưa có thảo luận nào. Hãy đặt câu hỏi đầu tiên!</p>
+  <% end %>
+</div>

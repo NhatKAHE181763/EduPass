@@ -12,6 +12,7 @@ class CoursesController < ApplicationController
     @parts = Tag.part
     @question_types = Tag.question_type
     base_exams = @course.exams.published
+    @comments = @course.comments.root_comments.where(is_deleted: false).includes(:user)
 
     @q = base_exams.ransack(params[:q])
 

@@ -3,25 +3,26 @@ class CommentPolicy < ApplicationPolicy
     true
   end
 
-  def show?
-    true
-  end
-
   def create?
-    user&.admin? || user&.teacher? || user&.student?
-  end
-
-  def update?
-    record.user_id == user&.id || user&.admin?
+    user.present?
   end
 
   def destroy?
-    record.user_id == user&.id || user&.admin?
+    user&.admin?
   end
 
   def pin?
     user&.admin?
   end
+
+  def like?
+    user.present?
+  end
+
+  def dislike?
+    user.present?
+  end
+
   class Scope < ApplicationPolicy::Scope
     # NOTE: Be explicit about which records you allow access to!
     # def resolve

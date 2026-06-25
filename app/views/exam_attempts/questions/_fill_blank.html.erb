@@ -1,6 +1,28 @@
+<%
+  is_submitted = @attempt.submitted?
+  user_answer = is_submitted ? @user_answers_hash[question.id] : nil
+
+  border_class = "border-primary border-opacity-50"
+
+  if is_submitted
+    border_class = user_answer.is_correct ? "border-success bg-success bg-opacity-10 text-success fw-bold" : "border-danger bg-danger bg-opacity-10 text-danger fw-bold"
+  end
+%>
+
 <div class="fill-blank-input mt-3">
-  <input type="text" class="form-control form-control-lg border-primary border-opacity-50 shadow-sm" 
+  <input type="text" class="form-control form-control-lg <%= border_class %> shadow-sm" 
          name="answers[<%= question.id %>]" 
+         value="<%= user_answer&.text_answer %>"
+         <%= 'readonly' if is_submitted%>
          placeholder="Nhập câu trả lời..."
          data-action="input->exam-form#markAnswered">
+
+  <% if is_submitted && !user_answer.is_correct %>
+    <div class="mt-2 text-success fw-bold">
+      <i class="bi bi-check-circle-fill"></i>
+      Đáp án đúng: <%= question.answers.find_by(is_correct: true)&.content %>
+    </div>
+  <% end %>
+  
+    <%= render "exam_attempts/questions/explanation", question: question, user_answer: user_answer if is_submitted %>
 </div>

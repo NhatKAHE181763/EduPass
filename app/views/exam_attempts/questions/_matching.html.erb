@@ -1,28 +1,52 @@
+<%
+  is_submitted = @attempt.submitted?
+  user_answer = is_submitted ? @user_answers_hash[question.id] : nil
+  user_pairs = user_answer&.matched_pairs || {}
+  right_options = question.matching_pairs.pluck(:right_content).uniq.shuffle 
+%>
+
 <div class="matching-input mt-3">
-  <% 
-    # Thu thập tất cả các vế phải (right_content) và đảo lộn xộn (shuffle) để làm danh sách lựa chọn
-    right_options = question.matching_pairs.pluck(:right_content).uniq.shuffle 
-  %>
   
-  <% question.matching_pairs.order(:order_index).each do |pair| %>
+  <% question.matching_pairs.each do |pair| %>
+    <%
+      user_choice = user_pairs[pair.id.to_s].to_s
+      select_bg = "border-primary border-opacity-50"
+
+      if is_submitted 
+        if user_choice == pair.right_content.to_s
+          select_bg = "bg-success bg-opacity-10 border-success text-success fw-bold"
+        else
+          select_bg = "bg-danger bg-opacity-10 border-danger text-danger fw-bold"
+        end
+      end
+    %>
     <div class="row align-items-center mb-3">
-      <!-- Vế trái (Đề bài cần ghép) -->
       <div class="col-md-6 fw-semibold text-dark">
-        <i class="bi bi-arrow-return-right me-2 text-muted"></i><%= pair.left_content %>
+        <%= pair.left_content %>
       </div>
       
-      <!-- Vế phải (Dropdown chứa các đáp án để chọn) -->
       <div class="col-md-6">
-        <!-- Đặt name là answers[question_id][pair_id] để thu thập được chính xác từng cặp -->
-        <select class="form-select border-primary border-opacity-50 shadow-sm" 
+        <!-- answers[question_id][pair_id] -->
+        <select class="form-select shadow-sm <%= select_bg %>"
                 name="answers[<%= question.id %>][<%= pair.id %>]" 
-                data-action="change->exam-form#markAnswered">
+                data-action="change->exam-form#markAnswered"
+                <%= "disabled" if is_submitted %>>
           <option value="">-- Chọn đáp án tương ứng --</option>
           <% right_options.each do |opt| %>
-            <option value="<%= opt %>"><%= opt %></option>
+            <option value="<%= opt %>" <%= "selected" if user_choice == opt %>>
+              <%= opt %>
+            </option>
           <% end %>
         </select>
+        <% if is_submitted && user_choice != pair.right_content.to_s %>
+            <div class="text-success small mt-1 fw-bold">
+              <i class="bi bi-check-circle"></i>
+              Đáp án đúng: <%= pair.right_content%>
+            </div>
+        <% end %>
       </div>
     </div>
   <% end %>
+
+  <%= render "exam_attempts/questions/explanation", question: question, user_answer: user_answer if is_submitted %>
 </div>

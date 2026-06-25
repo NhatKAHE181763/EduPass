@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_10_031958) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_24_034535) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -61,6 +61,35 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_10_031958) do
     t.bigint "question_id", null: false
     t.datetime "updated_at", null: false
     t.index ["question_id"], name: "index_answers_on_question_id"
+  end
+
+  create_table "comment_likes", force: :cascade do |t|
+    t.bigint "comment_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["comment_id"], name: "index_comment_likes_on_comment_id"
+    t.index ["user_id", "comment_id"], name: "index_comment_likes_on_user_id_and_comment_id", unique: true
+    t.index ["user_id"], name: "index_comment_likes_on_user_id"
+  end
+
+  create_table "comments", force: :cascade do |t|
+    t.text "body", null: false
+    t.bigint "commentable_id", null: false
+    t.string "commentable_type", null: false
+    t.datetime "created_at", null: false
+    t.boolean "is_deleted", default: false
+    t.boolean "is_pinned", default: false
+    t.integer "parent_id"
+    t.datetime "pinned_at"
+    t.bigint "pinned_by_id"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["commentable_type", "commentable_id"], name: "index_comments_on_commentable"
+    t.index ["is_pinned"], name: "index_comments_on_is_pinned"
+    t.index ["parent_id"], name: "index_comments_on_parent_id"
+    t.index ["pinned_by_id"], name: "index_comments_on_pinned_by_id"
+    t.index ["user_id"], name: "index_comments_on_user_id"
   end
 
   create_table "courses", force: :cascade do |t|
@@ -157,9 +186,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_10_031958) do
 
   create_table "questions", force: :cascade do |t|
     t.boolean "allow_multiple", default: false
-    t.text "content"
     t.datetime "created_at", null: false
-    t.text "explanation"
     t.integer "order_index"
     t.integer "question_type"
     t.bigint "section_id", null: false
@@ -210,7 +237,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_10_031958) do
   end
 
   create_table "user_answers", force: :cascade do |t|
-    t.bigint "answer_id", null: false
+    t.bigint "answer_id"
     t.datetime "created_at", null: false
     t.bigint "exam_attempt_id", null: false
     t.boolean "is_correct"
@@ -250,6 +277,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_10_031958) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "answers", "questions"
+  add_foreign_key "comment_likes", "comments"
+  add_foreign_key "comment_likes", "users"
+  add_foreign_key "comments", "users"
+  add_foreign_key "comments", "users", column: "pinned_by_id"
   add_foreign_key "courses", "users", column: "created_by_id"
   add_foreign_key "exam_attempts", "exams"
   add_foreign_key "exam_attempts", "users"

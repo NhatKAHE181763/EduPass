@@ -8,10 +8,7 @@ export default class extends Controller {
     duration: Number
   }
   connect() {
-    this.storageKey = `exam_timer_${this.attemptIdValue}_time`;
-
-    const savedTime = localStorage.getItem(this.storageKey);
-    this.timeRemaining = savedTime ? parseInt(savedTime, 10) : this.durationValue;
+    this.timeRemaining = this.durationValue;
     if (this.durationValue <= 0) this.timeRemaining = 0;
 
     this.hasWarned = false;
@@ -32,10 +29,9 @@ export default class extends Controller {
     }
 
     this.timeRemaining--;
-    localStorage.setItem(this.storageKey, this.timeRemaining);
     this.updateDisplay();
 
-    // 3. Show warning 5 minutes (10% cuối)
+    // 3. Show warning 5 minutes
     if (this.timeRemaining <= 300 && !this.hasWarned) {
       this.hasWarned = true;
       this.showWarning();
@@ -52,7 +48,6 @@ export default class extends Controller {
   timeUp() {
     clearInterval(this.timer);
     this.displayTarget.innerHTML = "00:00";
-    localStorage.removeItem(this.storageKey);
     alert("Đã hết thời gian làm bài! Hệ thống sẽ tự động nộp bài.");
 
     if (this.hasFormTarget) {

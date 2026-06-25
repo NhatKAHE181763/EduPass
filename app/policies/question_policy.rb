@@ -5,7 +5,7 @@ class QuestionPolicy < ApplicationPolicy
   end
 
   def create?
-    manage_questions?
+    manage_question?
   end
 
   def update?

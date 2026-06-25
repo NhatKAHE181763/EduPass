@@ -1,6 +1,6 @@
 class ExamAttemptsController < ApplicationController
   before_action :authenticate_user!
-  layout "exam_taking" # Sẽ dùng giao diện riêng cho trang làm bài (ẩn navbar/footer)
+  layout "exam_taking"
 
   def show
     # Chỉ được xem bài làm của chính mình
@@ -10,17 +10,17 @@ class ExamAttemptsController < ApplicationController
     @exam = @attempt.exam
     @sections = @exam.sections.includes(:questions).order(:order_index)
     @notes = @attempt.notes.order(created_at: :desc)
+
+    if @attempt.submitted?
+      @user_answers_hash = @attempt.user_answers.index_by(&:question_id)
+    end
   end
 
   def update
     @attempt = current_user.exam_attempts.find(params[:id])
     authorize @attempt
 
-    # Cập nhật trạng thái thành submitted hoặc timed_out
-    @attempt.update(status: params.dig(:exam_attempt, :status) || :submitted)
-
-    # Tạm thời quay lại trang danh sách bài thi với thông báo thành công
-    flash[:notice] = "Đã nộp bài thành công!"
-    redirect_to course_path(@attempt.exam.course)
+    GradingService.new(@attempt, params[:answers]).call
+    redirect_to exam_attempt_path(@attempt)
   end
 end

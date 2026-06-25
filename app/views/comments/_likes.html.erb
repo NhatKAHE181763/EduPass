@@ -1,0 +1,11 @@
+<div id="comment_<%= comment.id %>_likes">
+    <% if user_signed_in? && comment.comment_likes.exists?(user_id: current_user.id) %>
+        <%= button_to dislike_comment_path(comment), method: :post, class: "btn btn-sm btn-link p-0 text-danger text-decoration-none" do %>
+            ❤️<%= comment.comment_likes.count %>
+        <% end %>
+    <% else %>
+        <%= button_to like_comment_path(comment), method: :post, class: "btn btn-sm btn-link p-0 text-body text-decoration-none" do %>
+            🤍<%= comment.comment_likes.count %>
+        <% end %>
+    <% end %>
+</div>

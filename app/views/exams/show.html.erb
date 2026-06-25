@@ -6,11 +6,11 @@
         <%= link_to "← Trở lại Khóa học", course_path(@exam.course), class: "text-decoration-none text-muted fw-bold" %>
       </div>
 
-      <div class="card shadow border-0 overflow-hidden">
+      <div class="card shadow overflow-hidden">
         <div class="card-body p-5 text-center">
           
           <% if @is_locked %>
-            <!-- GIAO DIỆN BỊ KHÓA -->
+            <!-- KHÓA -->
             <div class="mb-4">
               <div class="d-inline-flex align-items-center justify-content-center bg-warning bg-opacity-10 text-warning rounded-circle" style="width: 80px; height: 80px;">
                 <span style="font-size: 2.5rem;">🔒</span>
@@ -22,22 +22,36 @@
             <%= link_to "Nâng cấp Premium", "#", class: "btn btn-warning btn-lg px-5 fw-bold text-dark rounded-pill shadow-sm" %>
           
           <% else %>
-            <!-- GIAO DIỆN MỞ KHÓA -->
-            <div class="mb-4">
-              <div class="d-inline-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary rounded-circle" style="width: 80px; height: 80px;">
-                <span style="font-size: 2.5rem;">📝</span>
-              </div>
-            </div>
-            
+            <!-- Unlocked -->
             <h2 class="fw-bold mb-3"><%= @exam.title %></h2>
-            
-            <div class="d-flex justify-content-center gap-4 mb-5 text-muted">
-              <div><strong>⏱ <%= @exam.duration_minutes %> phút</strong></div>
-              <div><strong>✨ Nhiều dạng câu hỏi</strong></div>
-            </div>
-            
-            <%= link_to "Bắt đầu làm bài", "#", class: "btn btn-primary btn-lg px-5 fw-bold rounded-pill shadow-sm" %>
-            <div class="form-text mt-3">Lưu ý: Thời gian đếm ngược sẽ bắt đầu ngay khi bạn ấn vào nút.</div>
+
+            <% if @attempts.present? %>
+              <div class="text-start mt-4 border-top pt-4">
+                <h5 class="fw-bold mb-3">Lịch sử làm bài</h5>
+                <div class="list-group shadow-sm">
+                  <% @attempts.each do |attempt| %>
+                    <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-center p-3">
+                      
+                      <span class="fw-bold"><%= attempt.score %></span>
+                      <% if attempt.submitted? %>
+                        <span>Đã nộp</span>
+                      <% elsif attempt.in_progress? %>
+                        <span>Đang làm</span>
+                      <% else %>
+                        <span><%= attempt.status %></span>
+                      <% end %>
+                      <span><%= attempt.started_at.strftime("%d/%m/%Y %H:%M") %></span>
+                      <% if attempt.submitted? %>
+                        <span><%= Time.at(attempt.actual_duration_seconds.to_i).utc.strftime("%M:%S") %></span>
+                      <% end %>
+
+                      <%= link_to "Xem lại", exam_attempt_path(attempt), class: "btn btn-sm btn-success" if attempt.submitted? %>
+                      <%= link_to "Tiếp tục", exam_attempt_path(attempt), class: "btn btn-sm btn-warning" if attempt.in_progress? %>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
           <% end %>
 
         </div>

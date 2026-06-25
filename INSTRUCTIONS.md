@@ -369,7 +369,7 @@ user_id + word (unique), phonetic (IPA), definitions (jsonb), source_exam_id
 - Polymorphic commentable (Exam)
 - Nested: parent_id (1 cấp indent), pinned comments lên đầu
 - Reply: inline form (Turbo Frame)
-- Edit/Delete: inline edit, soft delete is_deleted → hiển thị [deleted]
+- Delete: soft delete is_deleted → hiển thị [deleted] (KHÔNG cho phép edit/update comment)
 - Pin (Admin/Teacher): is_pinned, pinned_by_id, badge 📌
 - Like: AJAX toggle CommentLike (user + comment unique)
 - Kaminari pagination (10/page)
@@ -558,3 +558,22 @@ heroku run rails db:seed
 khi code phải đảm bảo phải implement authorization đầy đủ bằng policy,
 đảm bảo mọi routes, model, controller, view phải đầy đủ.
 Tuyệt đối ko code hộ tôi mà phải đưa ra hướng dẫn chi tiết từng bước một.
+
+
+## 7. Tài liệu kỹ thuật: Cơ chế nộp bài và lưu trữ đáp án
+
+### Cơ chế Form Submit (Nested Params)
+Thay vì dùng JavaScript phức tạp để gom dữ liệu, Form nộp bài sử dụng cấu trúc đặt tên `name` của HTML form để Rails tự động parse thành một Hash `params[:answers]` gom chung mọi đáp án:
+- **Trắc nghiệm 1 lựa chọn**: `<input type="radio" name="answers[10]">` ➡️ `params[:answers] = { "10" => "45" }`
+- **Trắc nghiệm nhiều lựa chọn**: `<input type="checkbox" name="answers[10][]">` ➡️ `params[:answers] = { "10" => ["45", "46"] }`
+- **Điền từ**: `<input type="text" name="answers[11]">` ➡️ `params[:answers] = { "11" => "Hello" }`
+- **Nối từ (Matching)**: Dùng cú pháp Hash lồng `<select name="answers[12][1]">` ➡️ `params[:answers] = { "12" => { "1" => "A", "2" => "B" } }`
+
+Cách thiết kế này giúp Controller nhận được một Hash đồng nhất, dễ dàng truyền vào `GradingService` để lặp qua và chấm điểm tự động.
+
+### Lưu trữ Trắc nghiệm nhiều lựa chọn (Multiple Choice - Checkbox)
+Do cột `answer_id` trong DB là số nguyên, không thể lưu nhiều ID cùng lúc, hệ thống sử dụng quy tắc sau cho bảng `user_answers`:
+- Giữ vững nguyên tắc chuẩn hóa: **1 câu hỏi = 1 bản ghi UserAnswer**.
+- Với dạng trắc nghiệm nhiều lựa chọn, mảng ID (VD: `[45, 46]`) sẽ được chuyển thành chuỗi JSON (`to_json`) và lưu vào cột `text_answer`. Cột `answer_id` sẽ được bỏ trống.
+- Cột `is_correct` sẽ đánh dấu `true/false` dựa trên việc mảng ID này có khớp hoàn toàn với danh sách đáp án đúng hay không.
+- Ở View Kết quả, chỉ cần `JSON.parse(user_answer.text_answer)` để khôi phục mảng và render lại giao diện. Cách này tối ưu hiệu suất và đơn giản hóa logic tính toán so với việc xé lẻ thành nhiều bản ghi.

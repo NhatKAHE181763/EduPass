@@ -1,0 +1,23 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: one
+  commentable: one
+  commentable_type: Commentable
+  parent_id: 1
+  body: MyText
+  is_pinned: false
+  pinned_by_id: 1
+  pinned_at: 2026-06-24 10:06:44
+  is_deleted: false
+
+two:
+  user: two
+  commentable: two
+  commentable_type: Commentable
+  parent_id: 1
+  body: MyText
+  is_pinned: false
+  pinned_by_id: 1
+  pinned_at: 2026-06-24 10:06:44
+  is_deleted: false

@@ -546,7 +546,7 @@ docker-compose up
 
 ```bash
 # Procfile
-web:    bundle exec puma -C config/puma.rb
+web:    bundle exec puma -C config/puma.rb & bundle exec rake solid_queue:start
 worker: bundle exec rake solid_queue:work
 
 # Deploy

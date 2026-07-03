@@ -1,4 +1,4 @@
-class RecordStudyActivity
+class RecordStudyActivityService
     def self.call(user:, duration: 0, is_exam: false, date: Date.current)
         new(user, duration, is_exam, date).call
     end

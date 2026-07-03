@@ -1,3 +1,11 @@
+<% content_for :title, "#{@course.title} - EduPass" %>
+<% content_for :description, truncate(strip_tags(@course.description), length: 150) %>
+<% content_for :canonical, course_url(@course) %>
+<% if @course.thumbnail.attached? %>
+  <% content_for :og_image, url_for(@course.thumbnail) %>
+<% end %>
+
+
 <div class="mb-2">
   <nav aria-label="breadcrumb">
     <ol class="breadcrumb mb-1">
@@ -134,7 +142,7 @@
                 
                 <div class="ms-3">
                   <% if is_locked %>
-                    <%= link_to "Nâng cấp", "#", class: "btn btn-warning text-dark px-4 rounded-pill fw-bold" %>
+                    <%= link_to "Nâng cấp", subscriptions_path, class: "btn btn-warning text-dark px-4 rounded-pill fw-bold" %>
                   <% else %>
                     <%= button_to "Làm bài", start_exam_path(exam), method: :post, class: "btn btn-outline-primary px-4 rounded-pill fw-bold" %>
                     <%= link_to "Lịch sử", exam_path(exam), class: "btn btn-sm btn-outline-secondary fw-bold px-4 rounded-pill mt-1" %>
@@ -170,7 +178,7 @@
       Vui lòng <%= link_to "đăng nhập", new_user_session_path, class: "fw-bold" %> để tham gia thảo luận.
   <% end %>
 
-<div class="mt-4">
+<div class="mt-4" id="comments_list">
   <% if @comments.any? %>
     <% @comments.each do |comment| %>
       <%= render "comments/comment", comment: comment %>

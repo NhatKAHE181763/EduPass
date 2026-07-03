@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_24_034535) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_25_033417) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -174,6 +174,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_24_034535) do
     t.index ["section_id"], name: "index_notes_on_section_id"
   end
 
+  create_table "orders", force: :cascade do |t|
+    t.decimal "amount"
+    t.datetime "created_at", null: false
+    t.string "currency"
+    t.string "payment_method"
+    t.string "payment_status"
+    t.string "transaction_id"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["user_id"], name: "index_orders_on_user_id"
+  end
+
   create_table "question_bookmarks", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.bigint "exam_attempt_id", null: false
@@ -206,14 +218,26 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_24_034535) do
   end
 
   create_table "study_activities", force: :cascade do |t|
-    t.date "activity_date"
+    t.date "activity_date", null: false
     t.datetime "created_at", null: false
-    t.integer "exam_attempts_count", default: 0
-    t.integer "total_duration_seconds", default: 0
+    t.integer "exam_attempts_count", default: 0, null: false
+    t.integer "total_duration_seconds", default: 0, null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
     t.index ["user_id", "activity_date"], name: "index_study_activities_on_user_id_and_activity_date", unique: true
     t.index ["user_id"], name: "index_study_activities_on_user_id"
+  end
+
+  create_table "subscriptions", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "expired_at"
+    t.integer "plan"
+    t.datetime "started_at"
+    t.integer "status"
+    t.string "stripe_subscription_id"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["user_id"], name: "index_subscriptions_on_user_id"
   end
 
   create_table "taggings", force: :cascade do |t|
@@ -290,11 +314,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_24_034535) do
   add_foreign_key "matching_pairs", "questions"
   add_foreign_key "notes", "exam_attempts"
   add_foreign_key "notes", "sections"
+  add_foreign_key "orders", "users"
   add_foreign_key "question_bookmarks", "exam_attempts"
   add_foreign_key "question_bookmarks", "questions"
   add_foreign_key "questions", "sections"
   add_foreign_key "sections", "exams"
   add_foreign_key "study_activities", "users"
+  add_foreign_key "subscriptions", "users"
   add_foreign_key "taggings", "tags"
   add_foreign_key "user_answers", "answers"
   add_foreign_key "user_answers", "exam_attempts"

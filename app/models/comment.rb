@@ -27,4 +27,12 @@ class Comment < ApplicationRecord
   end
 
   scope :root_comments, -> { where(parent_id: nil) }
+
+  def self.ransackable_attributes(auth_object = nil)
+    %w[body is_deleted is_pinned created_at]
+  end
+
+  def self.ransackable_associations(auth_object = nil)
+    %w[user]
+  end
 end

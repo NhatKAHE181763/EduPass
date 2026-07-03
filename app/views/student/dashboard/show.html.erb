@@ -1,48 +1,15 @@
-<%# app/views/students/dashboard/show.html.erb %>
-<link rel="stylesheet" href="https://unpkg.com/cal-heatmap/dist/cal-heatmap.css">
-
 <div class="container py-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="fw-bold">Tổng quan học tập</h2>
   </div>
 
-  <!-- Phần Thống Kê (Thực tế làm bài) -->
   <div class="row mb-5">
-    <!-- Card: Tổng bài đã làm -->
     <div class="col-lg-8">
-
-        <!-- Widget Heatmap -->
-        <div class="card shadow-sm border-0 mb-4">
-            <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
-                <h5 class="mb-0 fw-bold">Tần suất luyện tập</h5>
-                <select id="heatmapYearSelect" class="form-select form-select-sm w-auto">
-                    <% current_year = Date.today.year %>
-                    <option value="<%= current_year %>"><%= current_year %></option>
-                    <option value="<%= current_year - 1 %>"><%= current_year - 1 %></option>
-                    <option value="<%= current_year - 2 %>"><%= current_year - 2 %></option>
-                </select>
-            </div>
-            <div class="card-body overflow-auto">
-                <div id="cal-heatmap" style="width: max-content; margin: 0 auto;"></div>
-            </div>
-        </div>
-
-        <!-- Widget Chart.js -->
-        <div class="card shadow-sm border-0 mb-4">
-            <div class="card-header bg-white py-3">
-                <h5 class="mb-0 fw-bold">Tiến độ điểm số (20 bài gần nhất)</h5>
-            </div>
-            <div class="card-body">
-                <canvas id="scoreChart" height="150"></canvas>
-            </div>
-        </div>
-                <!-- Bảng Lịch sử làm bài -->
         <div class="card shadow-sm border-0 mb-4">
             <div class="card-header bg-white py-3">
                 <h5 class="mb-0 fw-bold">Lịch sử làm bài</h5>
             </div>
             <div class="card-body">
-                <!-- Filter Form (Ransack) -->
                 <%= search_form_for @q, url: student_dashboard_path, method: :get, class: "row g-3 mb-4" do |f| %>
                     <div class="col-md-5">
                         <%= f.select :exam_course_course_type_eq, 
@@ -55,16 +22,15 @@
                     </div>
                 <% end %>
 
-                <!-- Table -->
                 <div class="table-responsive">
                     <table class="table table-hover align-middle">
                         <thead class="table-light">
                             <tr>
-                                <th><%= sort_link(@q, :exam_title, "Tên bài thi", default_order: :desc, class: 'text-decoration-none text-dark') %></th>
+                                <th>Tên bài thi</th>
                                 <th>Loại</th>
                                 <th>Điểm</th>
                                 <th>Thời gian làm</th>
-                                <th><%= sort_link(@q, :submitted_at, "Ngày nộp", default_order: :desc, class: 'text-decoration-none text-dark') %></th>
+                                <th>Ngày nộp</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -85,7 +51,6 @@
                     </table>
                 </div>
                 
-                <!-- Pagination -->
                 <% if @exam_attempts.total_pages > 1 %>
                     <div class="d-flex justify-content-center mt-3">
                         <%= paginate @exam_attempts %>
@@ -97,7 +62,6 @@
     </div>
 
     <div class="col-lg-4">
-        <!-- Widget Countdown -->
         <% if @upcoming_exam.present? %>
             <div class="card shadow-sm border-0 mb-4 bg-primary text-white">
                 <div class="card-body text-center py-4">
@@ -111,11 +75,11 @@
                 </div>
             </div>
         <% end %>
-        <!-- Phần hiển thị Exam Plans -->
+        <!-- Exam Plans -->
         <div class="card shadow-sm border-0">
             <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
             <h5 class="mb-0 fw-bold">Kế hoạch thi của bạn</h5>
-            <%= link_to "Tạo kế hoạch mới", new_exam_plan_path, class: "btn btn-sm btn-primary" %>
+            <%= link_to "Tạo mới", new_exam_plan_path, class: "btn btn-sm btn-primary" %>
             </div>
             
             <div class="card-body p-0">
@@ -160,136 +124,3 @@
     
   </div>
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<script type="module">
-  import CalHeatmap from 'cal-heatmap';
-
-  // 1. Khởi tạo Heatmap
-  const heatmapContainer = document.getElementById('cal-heatmap');
-  if (heatmapContainer) {
-    // Xoá sạch HTML bên trong để chống nhân bản khi Turbo load lại
-    heatmapContainer.innerHTML = '';
-    
-    let cal = new CalHeatmap();
-
-    function renderHeatmap(year) {
-      let startDate = new Date();
-      startDate.setMonth(startDate.getMonth() - 11);
-      startDate.setDate(15);
-      let sourceUrl = '/student/dashboard/weekly_activity';
-      
-      if (year) {
-        startDate = new Date(year, 0, 15);
-        sourceUrl = `/student/dashboard/weekly_activity?year=${year}`;
-      }
-
-      cal.paint({
-        itemSelector: '#cal-heatmap',
-        domain: {
-          type: 'month',
-          label: { text: 'MMM', textAlign: 'start', position: 'top' },
-        },
-        subDomain: { type: 'day', radius: 2, width: 15, height: 15 },
-        range: 12, // Vẽ 12 tháng
-        date: { start: startDate },
-        data: {
-          source: sourceUrl,
-          type: 'json',
-          x: 'date',
-          y: 'value'
-        },
-        scale: {
-          color: {
-            type: 'linear',
-            range: ['#ebedf0', '#9be9a8', '#40c463', '#30a14e', '#216e39'], // Tone màu xanh GitHub
-            domain: [0, 1, 3, 5, 10]
-          }
-        }
-      });
-    }
-
-    const yearSelect = document.getElementById('heatmapYearSelect');
-    if (yearSelect) {
-      renderHeatmap(yearSelect.value);
-      yearSelect.addEventListener('change', (e) => {
-        cal.destroy().then(() => {
-          cal = new CalHeatmap();
-          renderHeatmap(e.target.value);
-        });
-      });
-    } else {
-      renderHeatmap();
-    }
-  }
-
-  // 2. Khởi tạo Chart.js (Mock Data)
-  const ctx = document.getElementById('scoreChart');
-  if (ctx) {
-    // Hủy chart cũ nếu đã tồn tại (chống lỗi Canvas is already in use)
-    let existingChart = Chart.getChart(ctx);
-    if (existingChart) {
-      existingChart.destroy();
-    }
-
-    // Mock Labels cho 8 bài gần nhất
-    const mockLabels = ["Lần 1", "Lần 2", "Lần 3", "Lần 4", "Lần 5", "Lần 6", "Lần 7", "Lần 8"];
-    // Giả sử làm xen kẽ IELTS và TOEIC
-    const mockIeltsScores = [5.0, 5.5, 5.5, 6.0, 6.5, null, 6.5, 7.0];
-    const mockToeicScores = [null, 750, null, null, 850, 650, null, 900];
-    new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: mockLabels,
-        datasets: [
-          {
-            label: 'IELTS Academic',
-            data: mockIeltsScores,
-            yAxisID: 'yIelts',
-            borderColor: '#0d6efd',
-            tension: 0.3,
-            spanGaps: true // Thuộc tính này rất quan trọng để nối các điểm qua khoảng null
-          },
-          {
-            label: 'TOEIC',
-            data: mockToeicScores,
-            yAxisID: 'yToeic',
-            borderColor: '#198754',
-            tension: 0.3,
-            spanGaps: true
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        interaction: {
-          mode: 'index',
-          intersect: false,
-        },
-        plugins: {
-          legend: { position: 'bottom' }
-        },
-        scales: {
-          yIelts: {
-            type: 'linear',
-            display: true,
-            position: 'left',
-            min: 0,
-            max: 9.0,
-            title: { display: true, text: 'Điểm IELTS' }
-          },
-          yToeic: {
-            type: 'linear',
-            display: true,
-            position: 'right',
-            min: 0,
-            max: 990,
-            title: { display: true, text: 'Điểm TOEIC' },
-            grid: { drawOnChartArea: false } // Ẩn grid của trục này để không bị rối
-          }
-        }
-      }
-    });
-  }
-</script>

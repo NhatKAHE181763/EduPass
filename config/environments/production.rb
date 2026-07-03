@@ -38,7 +38,7 @@ Rails.application.configure do
   config.logger   = ActiveSupport::TaggedLogging.logger(STDOUT)
 
   # Change to "debug" to log everything (including potentially personally-identifiable information!).
-  config.log_level = ENV.fetch("RAILS_LOG_LEVEL", "info")
+  config.log_level = :warn
 
   # Prevent health checks from clogging up the logs.
   config.silence_healthcheck_path = "/up"
@@ -58,7 +58,26 @@ Rails.application.configure do
   # config.action_mailer.raise_delivery_errors = false
 
   # Set host to be used by links generated in mailer templates.
-  config.action_mailer.default_url_options = { host: "example.com" }
+
+  # Make template changes take effect immediately.
+  config.action_mailer.perform_caching = false
+
+  host = "sample-app-8ar8.onrender.com"
+  # Set localhost to be used by links generated in mailer templates.
+  config.action_mailer.default_url_options = { host: host, protocol: "https" }
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.perform_deliveries = true
+
+  config.action_mailer.smtp_settings = {
+    address: "smtp.sendgrid.net",
+    port: 587,
+    domain: "onrender.com",
+    user_name: "apikey",
+    password: ENV["SENDGRID_API_KEY"],
+    authentication: "plain",
+    enable_starttls_auto: true,
+    debug_output: $stdout
+  }
 
   # Specify outgoing SMTP server. Remember to add smtp/* credentials via bin/rails credentials:edit.
   # config.action_mailer.smtp_settings = {

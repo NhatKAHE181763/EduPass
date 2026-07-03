@@ -1,4 +1,4 @@
-class Admin::QuestionsController < ApplicationController
+class Admin::QuestionsController < AdminController
   before_action :authenticate_user!
   before_action :set_exam_and_section
   before_action :set_question, only: %i[edit update destroy]

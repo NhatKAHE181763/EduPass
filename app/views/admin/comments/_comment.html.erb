@@ -1,0 +1,30 @@
+<tr id="<%= dom_id(comment) %>" class="<%= 'table-warning' if comment.is_pinned? %>">
+  <td>
+    <div class="mb-1">
+      <% if comment.is_pinned? %>
+        <span class="badge bg-warning text-dark me-1"><i class="bi bi-pin-angle-fill"></i> Đang ghim</span>
+      <% end %>
+      <%= truncate(comment.body, length: 150) %>
+    </div>
+  </td>
+  <td>
+    <div class="fw-bold"><%= comment.user.full_name %></div>
+    <div class="text-muted small"><%= comment.user.email %></div>
+  </td>
+  <td>
+    <%= comment.commentable.title %><br>
+  </td>
+  <td><%= comment.created_at.strftime("%d/%m/%Y %H:%M") %></td>
+  <td class="text-end">
+
+    <%= button_to toggle_pin_admin_comment_path(comment), method: :patch,
+    class: "btn btn-sm #{comment.is_pinned? ? 'btn-warning' : 'btn-outline-secondary'} me-1 mb-1", form_class: "d-inline-block" do %>
+      <i class="bi bi-pin"></i>
+    <% end %>
+
+    <%= button_to admin_comment_path(comment), method: :delete, 
+    class: "btn btn-sm btn-outline-danger mb-1", form_class: "d-inline-block", data: { turbo_confirm: "Bạn chắc chắn muốn xóa bình luận này vì vi phạm?" } do %>
+      <i class="bi bi-trash"></i>
+    <% end %>
+  </td>
+</tr>

@@ -1,0 +1,77 @@
+<div class="container py-5">
+    <h2 class="fw-bold mb-4">
+        Lịch sử thanh toán
+    </h2>
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm rounded-4 h-100">
+                <div class="card-header border-0 pt-4 pb-0 ">
+                    <h5 class="fw-bold text-muted mb-0">Gói cước hiện tại</h5>
+                </div>
+                
+                <div class="card-body">
+                    <% if @current_subscription %>
+                        <div class="d-flex align-items-center mb-3">
+                            <h3 class="fw-bold text-primary mb-0">
+                                <%= @current_subscription.plan.titleize %>
+                            </h3>
+                            <span class="badge bg-success mt-1 ms-2">Đang hoạt động</span>
+                        </div>
+                        <p class="text-muted mb-1">
+                            Ngày kích hoạt: <%= @current_subscription.started_at.strftime("%d/%m/%Y")%>
+                        </p>
+                        <p class="text-danger fw-bold mb-0">
+                            Ngày hết hạn: <%= @current_subscription.expired_at.strftime("%d/%m/%Y")%>
+                        </p>
+                    <% else %>
+                        <div class="text-center py-4">
+                            <p class="text-muted mt-3 mb-3">Bạn chưa có gói cước Premium nào</p>
+                            <%= link_to "Nâng cấp ngay", subscriptions_path, class: "btn btn-primary rounded-pill fw-bold px-4" %>
+                        </div>
+                    <% end %>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-body p-0">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="ps-4 py-3">Ngày giao dịch</th>
+                                <th class="py-3">Mã GD</th>
+                                <th class="py-3 text-end">Số tiền</th>
+                                <th class="pe-4 py-3 text-end">Trạng thái</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if @orders.any? %>
+                                <% @orders.each do |order| %>
+                                    <tr>
+                                        <td class="ps-4"><%= order.created_at.strftime("%d/%m/%Y") %></td>
+                                        <td><%= order.transaction_id.to_s.truncate(15) %></td>
+                                        <td class="fw-bold text-end">   <%= number_to_currency(order.amount, unit: "đ", precision: 0) %></td>
+                                        <td class="pe-4 text-end">
+                                        <% if order.payment_status == 'paid' %>
+                                            <span class="badge bg-success-subtle text-success border border-success-subtle">Thành công</span>
+                                        <% else %>
+                                            <span class="badge bg-warning-subtle text-warning border border-warning-subtle"><%= order.payment_status %></span>
+                                        <% end %>
+                                        </td>
+                                    </tr>
+                                <% end %>
+                            <% else %>
+                                <tr>
+                                    <td colspan="4" class="text-center py-5 text-muted">
+                                        Không có lịch sử giao dịch nào.
+                                    </td>
+                                </tr>
+                            <% end %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

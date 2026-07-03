@@ -5,8 +5,6 @@ class User < ApplicationRecord
 
   enum :role, admin: 0, student: 1, teacher: 2
 
-  # enum status: { draft: 0, published: 1 } # Thêm vào model Exam
-
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable,
       :confirmable, :omniauthable, :jwt_authenticatable,
@@ -18,15 +16,16 @@ class User < ApplicationRecord
   has_many :exam_attempts, dependent: :destroy
   has_many :comments, dependent: :destroy
   has_many :created_courses, class_name: "Course", foreign_key: "created_by_id", dependent: :nullify
-
+  has_many :subscriptions, dependent: :destroy
+  has_many :orders, dependent: :destroy
   # Hàm xử lý logic khi nhận data từ Google trả về
   def self.from_omniauth(auth)
     # Tìm user theo provider và uid, nếu chưa có thì tạo mới
     where(provider: auth.provider, uid: auth.uid).first_or_create do |user|
       user.email = auth.info.email
-      # Tạo mật khẩu ngẫu nhiên cho user đăng nhập bằng Google
+      # Tạo mật khẩu ngẫu nhiên
       user.password = Devise.friendly_token[0, 20]
-      user.full_name = auth.info.name   # Lưu tên từ Google
+      user.full_name = auth.info.name
       user.skip_confirmation!           # Tự động xác thực email (vì đã tin tưởng Google)
     end
   end
@@ -47,38 +46,19 @@ class User < ApplicationRecord
     study_activities.sum(:exam_attempts_count)
   end
 
-  def active_streak
-    # descending
-    activities = study_activities.has_content.recent.pluck(:activity_date).uniq
-    0 if activities.empty?
-    streak = 0
-    current_date = Date.current
-
-    if activities.first == current_date
-      streak = 1
-      start_idx = 1
-      check_date = current_date - 1.day
-    elsif activities.first == current_date - 1.day
-      streak = 1
-      start_idx = 1
-      check_date = current_date - 2.days
-    else
-      0
-    end
-
-    activities[start_idx..-1].each do |date|
-      if date == check_date
-        streak += 1
-        check_date -= 1.day
-      else
-        break
-      end
-    end
-    streak
-  end
-
   def has_active_subscription?
     return true if admin? || teacher?
-    false
+
+    subscriptions.where(status: :active)
+    .where("expired_at > ?", Time.current)
+    .exists?
+  end
+
+  def self.ransackable_attributes(auth_object = nil)
+    %w[email full_name role status]
+  end
+
+  def self.ransackable_associations(auth_object = nil)
+    %w[avatar comments created_courses exam_attempts exam_plans orders subscriptions study_activities]
   end
 end

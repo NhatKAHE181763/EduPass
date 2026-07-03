@@ -1,0 +1,144 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Quản lý thanh toán</h2>
+</div>
+
+<ul class="nav nav-tabs mb-4" id="orderTabs">
+    <li class="nav-item">
+        <button class="nav-link active fw-bold" id="orders-tab" data-bs-toggle="tab" data-bs-target="#orders-pane" type="button">
+            Lịch sử giao dịch
+        </button>
+    </li>
+    <li class="nav-item">
+        <button class="nav-link fw-bold" id="subscriptions-tab" data-bs-toggle="tab" data-bs-target="#subscriptions-pane" type="button">
+            Gói cước active
+        </button>
+    </li>
+    <li class="nav-item">
+        <button class="nav-link fw-bold" id="stats-tab" data-bs-toggle="tab" data-bs-target="#stats-pane" type="button">
+            Báo cáo doanh thu
+        </button>
+    </li>
+</ul>
+
+<div class="tab-content" id="orderTabsContent">
+    <div class="tab-pane fade show active" id="orders-pane">
+        <div class="card border-0 shadow-sm">
+            <table class="table mb-0">
+                <thead>
+                    <tr>
+                        <th>
+                            Mã giao dịch
+                        </th>
+                        <th class="">
+                            Khách hàng
+                        </th>
+                        <th class="">
+                            Số tiền
+                        </th>
+                        <th class="">
+                            Ngày tạo
+                        </th>
+                        <th>
+                            Trạng thái
+                        </th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <% @orders.each do |order| %>
+                        <tr>
+                            <td><%= order.transaction_id.first(10)... %></td>
+                            <td>
+                                <div><%= order.user.full_name %></div>
+                                <small class="text-muted"><%= order.user.email %></small>
+                            </td>
+                            <td class="fw-bold text-success">
+                                <%= number_to_currency(order.amount, unit: "₫", format: "%n %u", precision: 0) %>
+                            </td>
+                            <td><%= order.created_at.strftime("%d/%m/%Y %H:%M") %></td>
+                            <td>
+                                <% if order.payment_status == "paid" %>
+                                    <span class="badge bg-success">Thành công</span>
+                                <% elsif order.payment_status == "failed" %>
+                                    <span class="badge bg-danger">Thất bại</span>
+                                <% else %>
+                                    <span class="badge bg-warning text-dark"><%= order.payment_status %></span>
+                                <% end %>
+                            </td>
+                        </tr>
+                    <% end %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="tab-pane fade" id="subscriptions-pane">
+        <div class="card border-0 shadow-sm">
+            <table class="table mb-0">
+                <thead>
+                    <tr>
+                        <th>Mã gói</th>
+                        <th>Khách hàng</th>
+                        <th>Tên gói cước</th>
+                        <th>Trạng thái</th>
+                        <th>Ngày kích hoạt</th>
+                        <th>Ngày hết hạn</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <% @active_subscriptions.each do |sub| %>
+                        <tr>
+                            <td><%= sub.id %></td>
+                            <td>
+                                <div><%= sub.user.full_name %></div>
+                                <small class="text-muted"><%= sub.user.email %></small>
+                            </td>
+                            <td class="fw-bold text-success">
+                                <%= sub.plan %>
+                            </td>
+                            <td>
+                                <span class="badge bg-warning text-dark"><%= sub.status %></span>
+                            </td>
+                            <td>
+                                <%= sub.created_at.strftime("%d/%m/%Y %H:%M") %>
+                            </td>
+                            <td>
+                                <%= sub.expired_at.strftime("%d/%m/%Y %H:%M") %>
+                            </td>
+                        </tr>
+                    <% end %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="tab-pane fade" id="stats-pane">
+        <div class="card border-0 shadow-sm col-md-6">
+            <table class="table mb-0">
+                <thead>
+                    <tr>
+                        <th>
+                            Tháng
+                        </th>
+                        <th class="text-end">
+                            Tổng doanh thu (VND)
+                        </th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <% @revenue_by_month.sort.reverse.each do |month, total| %>
+                        <tr>
+                            <td class="fw-bold">
+                                <%= month %>
+                            </td>
+                            <td class="text-end fw-bold">
+                                <%= number_to_currency(total, unit: "₫", format: "%n %u", precision: 0) %>
+                            </td>
+                        </tr>
+                    <% end %>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+</div>

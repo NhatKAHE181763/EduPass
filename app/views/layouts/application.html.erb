@@ -28,6 +28,22 @@
     <%= stylesheet_link_tag "actiontext", "data-turbo-track": "reload" %>
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
+
+    <title>
+      <%= yield(:title).presence || "Edupass - Nền tảng ôn thi tiếng Anh uy tín"%>
+    </title>
+    <meta name="description" content="<%= yield(:description).presence || 'Khám phá các khóa học và bài thi thử TOEIC, IELTS chất lượng cao.' %>">
+
+    <% if yield(:canonical).present? %>
+      <link rel="canonical" href="<%= yield(:canonical) %>">
+    <% end %>
+
+    <meta property="og:title" content="<%= yield(:title).presence || 'EduPass' %>">
+    <meta property="og:description" content="<%= yield(:description).presence || 'Nền tảng ôn thi tiếng Anh uy tín.'%>">
+    <meta property="og:image" content="<%= yield(:og_image).presence || asset_url('EduPass.png')%>">
+    <meta property="og:url" content="<%= request.original_url %>">
+    <meta property="og:type" content="website">
+
   </head>
 
   <body class="d-flex flex-column min-vh-100">
@@ -48,9 +64,12 @@
         </button>
         <div class="collapse navbar-collapse" id="mainNavbar">
           <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
-            <li class="nav-item"><a class="nav-link" href="#">Features</a></li>
-            <li class="nav-item"><a class="nav-link" href="#">Pricing</a></li>
-            <li class="nav-item"><a class="nav-link" href="#">About</a></li>
+            <% if user_signed_in? && current_user.admin? %>
+              <li class="nav-item"><a class="nav-link" href="<%= admin_dashboard_path %>">Admin</a></li>
+            <% end %>            
+            <li class="nav-item"><a class="nav-link" href="<%= courses_path %>">Courses</a></li>
+            <li class="nav-item"><a class="nav-link" href="<%= student_dashboard_path %>">Dashboard</a></li>
+            <li class="nav-item"><a class="nav-link" href="<%= edit_user_profile_path %>">Profile</a></li>
             <% if user_signed_in?%>
               <li class="nav-item">
                 <%= button_to "Sign out", destroy_user_session_path, method: :delete, class: "btn btn-danger btn-sm ms-lg-2" %>  
@@ -84,12 +103,7 @@
 
     <footer class="footer mt-auto py-3 border-top bg-white">
       <div class="container d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2">
-        <span class="text-muted">© <%= Time.current.year %> EduPass</span>
-        <div class="d-flex gap-3">
-          <a class="text-muted text-decoration-none" href="#">Privacy</a>
-          <a class="text-muted text-decoration-none" href="#">Terms</a>
-          <a class="text-muted text-decoration-none" href="#">Support</a>
-        </div>
+        <span class="text-muted"><%= Time.current.year %> EduPass</span>
       </div>
     </footer>
   </body>

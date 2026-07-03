@@ -20,7 +20,6 @@ class CoursePolicy < ApplicationPolicy
   end
 
   class Scope < ApplicationPolicy::Scope
-    # NOTE: Be explicit about which records you allow access to!
     def resolve
       if user&.admin? || user&.teacher?
         scope.all

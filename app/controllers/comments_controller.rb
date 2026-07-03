@@ -2,26 +2,27 @@ class CommentsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_comment, only: [ :destroy, :pin, :like, :dislike ]
 
-
   def create
     @comment = current_user.comments.build(comment_params)
     authorize @comment
 
     if @comment.save
-      redirect_back fallback_location: root_path, notice: "Bình luận đã được đăng"
+      respond_to do |format|
+        format.turbo_stream
+      end
     else
       redirect_back fallback_location: root_path, alert: "Có lỗi xảy ra: #{@comment.errors.full_messages.join(', ')}"
     end
   end
 
   def destroy
-    authorize @comment
     @comment.soft_delete!
-    redirect_back fallback_location: root_path, notice: "Đã xóa bình luận"
+    respond_to do |format|
+      format.turbo_stream
+    end
   end
 
   def pin
-    authorize @comment
     @comment.toggle_pin!(current_user)
     msg = @comment.is_pinned ? "Đã ghim bình luận lên đầu." : "Đã bỏ ghim bình luận."
 
@@ -29,7 +30,6 @@ class CommentsController < ApplicationController
   end
 
   def like
-    authorize @comment
     @comment.comment_likes.create(user: current_user)
 
     respond_to do |format|
@@ -38,7 +38,6 @@ class CommentsController < ApplicationController
   end
 
   def dislike
-    authorize @comment
     like = @comment.comment_likes.find_by(user_id: current_user.id)
     like&.destroy
 
@@ -50,6 +49,8 @@ class CommentsController < ApplicationController
 
   def set_comment
     @comment = Comment.find(params[:id])
+
+    authorize @comment
   end
 
   def comment_params

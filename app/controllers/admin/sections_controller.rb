@@ -1,4 +1,4 @@
-class Admin::SectionsController < ApplicationController
+class Admin::SectionsController < AdminController
   before_action :authenticate_user!
   before_action :set_exam
   before_action :set_section, only: %i[show edit update destroy]

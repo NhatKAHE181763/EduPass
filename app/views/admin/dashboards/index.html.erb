@@ -1,0 +1,43 @@
+<div class="d-flex justify-content-center flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-4 border-bottom">
+    <h1 class="h2 fw-bold">Tổng quan</h1>
+</div>
+
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 mb-4">
+    <div class="col">
+        <div class="card h-100 border-0 shadow-sm border-start border-success border-4">
+            <div class="card-body">
+            <h6 class="card-title text-muted fw-bold text-uppercase mb-2">Tổng người dùng</h6>
+            <h2 class="mb-0 fw-bold"><%= number_with_delimiter(@total_users) %></h2>
+            <small class="text-success fw-bold">
+                +<%= @new_users_this_week %> tuần này
+            </small>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card h-100 border-0 shadow-sm border-start border-success border-4">
+            <div class="card-body">
+                <h6 class="card-title text-muted fw-bold text-uppercase mb-2">Doanh thu tháng <%= Time.current.month %></h6>
+                <h2 class="mb-0 fw-bold text-success"><%= number_to_currency(@revenue_this_month, unit: "₫", format: "%n %u", precision: 0) %></h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col">
+        <div class="card h-100 border-0 shadow-sm border-start border-warning border-4">
+            <div class="card-body">
+                <h6 class="card-title text-muted fw-bold text-uppercase mb-2">Tổng khóa học</h6>
+                <h2 class="mb-0 fw-bold"><%= number_with_delimiter(@total_courses) %></h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col">
+        <div class="card h-100 border-0 shadow-sm border-start border-info border-4">
+            <div class="card-body">
+                <h6 class="card-title text-muted fw-bold text-uppercase mb-2">Lượt thi hôm nay</h6>
+                <h2 class="mb-0 fw-bold"><%= number_with_delimiter(@attempts_today) %></h2>
+            </div>
+        </div>
+    </div>
+</div>

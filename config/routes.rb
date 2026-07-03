@@ -16,9 +16,11 @@ Rails.application.routes.draw do
     omniauth_callbacks: "user/omniauth_callbacks"
   }
 
+  mount MissionControl::Jobs::Engine, at: "/admin/solid_queue"
+
   namespace :user do
     resource :profile, only: [ :edit, :update ]
-    resource :password, only: [ :edit, :update ], path: "change_password"
+    resource :security, only: [ :edit, :update ], controller: "passwords"
   end
 
   resources :exam_plans, except: [ :show ]
@@ -46,13 +48,33 @@ Rails.application.routes.draw do
     resources :notes, only: [ :create ]
   end
 
+  resources :subscriptions, only: [ :index, :create ] do
+    collection do
+      get :success
+      get :cancel
+    end
+  end
+
   namespace :student do
     resource :dashboard, only: [ :show ], controller: "dashboard"
-    get "dashboard/weekly_activity", to: "dashboard#weekly_activity"
+    resources :orders, only: [ :index ]
   end
 
   namespace :admin do
+    get "dashboard", to: "dashboards#index"
     resources :courses
+    resources :orders, only: [ :index ]
+    resources :comments, only: [ :index, :destroy ] do
+      member do
+        patch :toggle_pin
+      end
+    end
+    resources :users, only: [ :index, :show ] do
+      member do
+        patch :toggle_role
+        patch :toggle_status
+      end
+    end
     resources :exams do
       member do
         patch :toggle_status
@@ -72,6 +94,8 @@ Rails.application.routes.draw do
     end
   end
 
+  post "webhooks/stripe", to: "webhooks#stripe"
+  get "/sitemap.xml", to: "home#sitemap", format: "xml", as: :sitemap
   root "home#index"
 
   # Solid Queue dashboard

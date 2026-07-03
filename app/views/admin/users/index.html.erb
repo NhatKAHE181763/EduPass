@@ -1,0 +1,94 @@
+<div class="d-flex justify-content-between align-items-center">
+  <h1 class="h2 fw-bold">Danh sách user</h1>
+</div>
+
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body rounded">
+        <%= search_form_for @q, url: admin_users_path, class: "row g-3 align-items-end" do |f| %>
+            <div class="col-md-4">
+                <%= f.label :full_name_or_email_cont, "Tìm theo tên hoặc email" , class: "form-label" %>
+                <%= f.search_field :full_name_or_email_cont ,class: "form-control", placeholder: "Nhập tên hoặc email" %>
+            </div>
+
+            <div class="col-md-3">
+                <%= f.label :role_eq, "Lọc theo role" , class: "form-label" %>
+                <%= f.select :role_eq, User.roles.map { |k, v| [k.titleize, v] }, {include_blank: "Tất cả"}, class: "form-select" %>
+            </div>
+
+            <div class="col-md-3">
+                <%= button_tag type: "submit", class: "btn btn-primary w-100" do %>
+                    <i class="bi bi-search"></i> Tìm kiếm
+                <% end %>
+            </div>
+
+            <div class="col-md-2">
+                <%= link_to "Xóa bộ lọc", admin_users_path, class: "btn btn-secondary w-100" %>
+            </div>
+
+        <% end %>
+
+
+    </div>
+</div>
+
+
+<div class="card border-0 shadow-sm">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Email</th>
+            <th>Vai trò</th>
+            <th>Trạng thái</th>
+            <th class="text-end">Hành động</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @users.each do |user| %>
+            <tr>
+              <td><%= user.id %></td>
+              <td><%= user.email %></td>
+                
+              <td>
+                <% if user.admin? %>
+                    <span class="badge bg-danger">Admin</span>
+                <% elsif user.teacher? %>
+                    <span class="badge bg-warning">Teacher</span>
+                <% else %>
+                    <span class="badge bg-success">Student</span>
+                <% end %>
+              </td>
+              <td>
+                <% if user.discarded? %>
+                    <span class="badge bg-danger">Inactive</span>
+                <% else %>
+                    <span class="badge bg-success">Active</span>
+                <% end %>
+              </td>
+
+              <td class="text-end">
+                <% unless user.admin? %>
+                    <%= button_to toggle_role_admin_user_path(user), method: :patch, class: "btn btn-sm btn-outline-primary me-1", form_class: "d-inline-block" do %>
+                        <i class="bi bi-arrow-left-right"></i>
+                    <% end %>
+
+                    <%= button_to toggle_status_admin_user_path(user), method: :patch, class: "btn btn-sm #{user.discarded? ? 'btn-success' : 'btn-outline-danger'}", form_class: "d-inline-block" do %>
+                        <% if user.discarded? %>
+                            <i class="bi bi-unlock-fill"></i>
+                        <% else %>
+                            <i class="bi bi-lock-fill"></i>
+                        <% end %>
+                    <% end %>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card-footer pt-3 border-top-0">
+        <%= paginate @users %>
+    </div>
+</div>

@@ -10,7 +10,6 @@
      data-action="mouseup->highlighter#handleSelection"
      class="d-flex flex-column vh-100 overflow-hidden bg-light position-relative">
 
-  <!-- HIGHLIGHTER TOOLBAR -->
   <div data-highlighter-target="toolbar" 
        class="d-none position-absolute bg-white text-dark rounded shadow border px-2 py-1 d-flex align-items-center gap-1" 
        style="z-index: 1050; transform: translateX(-50%); margin-top: -10px;">
@@ -68,7 +67,6 @@
             <i class="bi bi-arrow-right"></i> Thoát
           <% end %>
         <% else %> 
-          <!-- Submit button -->
           <div class="text-end" data-exam-form-target="submitWrapper">
             <button type="submit" form="right-panel" class="btn btn-success btn-sm fw-bold px-5 shadow">Nộp Bài</button>
           </div>
@@ -78,8 +76,6 @@
 
   <!-- BODY-->
   <div data-controller="split-screen" class="d-flex flex-grow-1 overflow-hidden position-relative">
-
-    <!-- LEFT PANEL (Passages) -->
     <div id="left-panel" class="flex-shrink-0 bg-white overflow-y-auto h-100 shadow-sm" data-split-screen-target="leftPanel" style="flex-basis: 50%;">
       <div class="p-5">
         <% @sections.each_with_index do |section, idx| %>
@@ -89,12 +85,10 @@
               data-section-id="<%= section.id %>">
             <h4 class="fw-bold mb-4 text-primary"><%= section.title %></h4>
             
-            <!-- Audio Player -->
             <% if section.audio_file.attached? %>
               <%= render "shared/audio_player", audio_url: url_for(section.audio_file) %>
             <% end %>
 
-            <!-- Nội dung đoạn văn -->
             <% if section.passage.present? %>
               <div class="text-dark mt-3" style="line-height: 1.8; font-size: 1.1rem;">
                 <%= section.passage %>
@@ -106,12 +100,10 @@
       </div>
     </div>
 
-    <!-- DRAG DIVIDER -->
     <div class="drag-divider" data-split-screen-target="divider" data-action="mousedown->split-screen#startDrag">
       <div class="h-100 d-flex flex-column justify-content-center align-items-center text-muted opacity-50"><i class="bi bi-three-dots-vertical"></i></div>
     </div>
 
-    <!-- RIGHT PANEL (Questions Form) -->
     <%= form_with model: @attempt, id: "right-panel", data: { timer_target: "form", split_screen_target: "rightPanel" }, class: "flex-grow-1 bg-white overflow-y-auto h-100" do |f| %>
       <div class="p-5">
         <% question_index = 1 %>
@@ -134,7 +126,6 @@
                     </div>
                     
                     <% unless @attempt.submitted? %>
-                    <!-- Bookmark button -->
                     <%= link_to toggle_exam_attempt_question_bookmarks_path(@attempt, question_id: question.id),
                                 data: { turbo_method: :post },
                                 class: "btn btn-sm btn-light border shadow-sm d-flex align-items-center justify-content-center flex-shrink-0 ms-3" do %>
@@ -154,15 +145,12 @@
       </div>
     <% end %>
 
-    <!-- NOTES SIDEBAR -->
     <div id="notes-sidebar" data-highlighter-target="sidebar" class="d-none bg-white border-start flex-shrink-0 h-100 overflow-y-auto d-flex flex-column transition-all" style="width: 300px; z-index: 10;">
-      
       <div class="p-3 border-bottom d-flex justify-content-between align-items-center bg-light position-sticky top-0">
         <h6 class="mb-0 fw-bold">Ghi chú</h6>
         <button type="button" class="btn-close" data-action="click->highlighter#closeSidebar"></button>
       </div>
 
-      <!-- Form Nhập Note -->
       <div id="note-form-panel" data-highlighter-target="noteFormPanel" class="d-none p-3 border-bottom bg-warning bg-opacity-10 position-sticky" style="top: 55px;">
         <h6 class="fw-bold mb-2 text-warning"><i class="bi bi-pencil-fill"></i> Thêm Ghi Chú</h6>
         <textarea data-highlighter-target="noteInput" class="form-control mb-2" rows="3" placeholder="Nhập ghi chú..."></textarea>
@@ -172,7 +160,6 @@
         </div>
       </div>
 
-      <!-- Danh sách Notes -->
       <div class="p-3">
         <h6 class="fw-bold text-secondary mb-3"></h6>
         <div id="notes-list" class="d-flex flex-column gap-2" data-highlighter-target="notesList">
@@ -191,19 +178,16 @@
 
   </div>
 
-  <!-- FOOTER NAVIGATION -->
+  <!-- FOOTER -->
   <div class="bg-white border-top px-3 py-2 d-flex justify-content-between align-items-center flex-shrink-0 shadow-lg" style="height: 80px; z-index: 20;">
-    <!-- Nút Prev (Dùng flex-shrink-0 để nút không bị móp lại khi màn hình nhỏ) -->
     <button type="button" class="btn btn-outline-primary fw-bold flex-shrink-0" data-action="exam-form#prevSection" data-exam-form-target="prevBtn">
       <i class="bi bi-chevron-left"></i> Phần trước
     </button>
 
-    <!-- Mini-map điều hướng câu hỏi (Cuộn ngang - flex-nowrap và overflow-x-auto) -->
     <div class="d-flex flex-nowrap align-items-center gap-3 overflow-x-auto mx-3 flex-grow-1 pb-1" style="max-height: 60px;">
       <% q_idx = 1 %>
       <% @sections.each_with_index do |section, s_idx| %>
         
-        <!-- Nhóm các câu hỏi theo từng Section, cách nhau bởi thanh dọc (border-end) -->
         <div class="d-flex align-items-center gap-2 border-end border-2 pe-3">
           <span class="text-muted fw-bold text-nowrap" style="font-size: 0.8rem;">
             <%= section.title %>:
@@ -211,7 +195,6 @@
           
           <% section.questions.order(:order_index).each do |question| %>
             <div class="position-relative d-inline-block">
-              <!-- Lớp nền (background) cho nút minimap, đổi màu vàng nếu bookmarked -->
               <% is_bookmarked = @attempt.question_bookmarks.exists?(question_id: question.id) %>
               <div id="minimap_bg_<%= question.id %>" 
                    class="position-absolute w-100 h-100 top-0 start-0 rounded-0 <%= is_bookmarked ? 'bg-warning' : '' %>"
@@ -235,14 +218,12 @@
       <% end %>
     </div>
 
-    <!-- Nút Next -->
     <button type="button" class="btn btn-primary fw-bold flex-shrink-0" data-action="exam-form#nextSection" data-exam-form-target="nextBtn">
       Phần tiếp <i class="bi bi-chevron-right"></i>
     </button>
   </div>
 </div>
 
-<!-- Toast Cảnh báo -->
 <div class="toast-container position-fixed top-0 start-50 translate-middle-x p-3" style="z-index: 1060;">
   <div data-timer-target="warningToast" class="toast align-items-center text-bg-warning border-0 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
     <div class="d-flex">

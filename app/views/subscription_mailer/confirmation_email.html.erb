@@ -1,0 +1,10 @@
+<h2>Xin chào <%= @user.full_name %></h2>
+<p>
+    Chúc mừng bạn đã đăng ký thành công gói cước <strong><%= @subscription.plan.titleize %></strong> của EduPass.
+</p>
+
+<p>Gói cước của bạn sẽ có thời hạn sử dụng đến ngày <strong><%= @subscription.expired_at.strftime("%d/%m/%Y") %></strong>.</p>
+
+<p>Bây giờ bạn đã có quyền truy cập vào toàn bộ các Đề thi Premium của chúng tôi. Chúc bạn học tập tốt!</p>
+<br>
+<p>Trân trọng,<br>Đội ngũ EduPass.</p>

@@ -1,4 +1,4 @@
-class Admin::ExamsController < ApplicationController
+class Admin::ExamsController < AdminController
   before_action :authenticate_user!
   before_action :set_exam, only: %i[ show edit update destroy toggle_status ]
 

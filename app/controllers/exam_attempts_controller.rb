@@ -3,7 +3,6 @@ class ExamAttemptsController < ApplicationController
   layout "exam_taking"
 
   def show
-    # Chỉ được xem bài làm của chính mình
     @attempt = current_user.exam_attempts.find(params[:id])
     authorize @attempt
 
@@ -21,6 +20,7 @@ class ExamAttemptsController < ApplicationController
     authorize @attempt
 
     GradingService.new(@attempt, params[:answers]).call
+    StudyActivityUpdater.new(current_user, @attempt).call
     redirect_to exam_attempt_path(@attempt)
   end
 end

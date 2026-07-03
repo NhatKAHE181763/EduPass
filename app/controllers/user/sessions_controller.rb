@@ -36,3 +36,8 @@ class User::SessionsController < Devise::SessionsController
   #   devise_parameter_sanitizer.permit(:sign_in, keys: [:attribute])
   # end
 end
+
+
+
+# Base64.decode64(jwt)
+# JWT.decode(jwt, secret, true, algorithm: "HS256")

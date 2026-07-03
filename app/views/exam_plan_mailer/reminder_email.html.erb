@@ -1,0 +1,15 @@
+<h2>Chào <%= @user.full_name %>,</h2>
+
+<p>EduPass xin gửi lời nhắc nhở: Kế hoạch ôn thi <strong><%= @plan.plan_name %></strong> của bạn đang đến rất gần!</p>
+
+<p>
+  Chỉ còn đúng <strong style="color: red; font-size: 1.5em;"><%= @days_left %> ngày</strong> nữa là đến ngày thi chính thức (<%= @plan.exam_date.strftime("%d/%m/%Y") %>).
+</p>
+
+<p>Hãy giữ vững tinh thần, tập trung ôn luyện bài thi Premium để đạt kết quả cao nhất nhé!</p>
+
+<br>
+<p>
+  Chúc bạn thành công,<br>
+  <strong>Đội ngũ EduPass.</strong>
+</p>
